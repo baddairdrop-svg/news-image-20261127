@@ -52,10 +52,11 @@ GREY = (96, 100, 112)
 RULE = (196, 190, 174)
 CREAM = (255, 253, 247)
 
-# Region colours, slots 0..10 (see stories.py).
+# Region colours, slots 0..12 (see stories.py).
 REGIONS = [
     ("NORTH AMERICA", (178, 84, 52)),
     ("SOUTH AMERICA", (120, 150, 70)),
+    ("NORTH EUROPE", (80, 120, 180)),
     ("WEST EUROPE", (62, 96, 150)),
     ("EAST EUROPE", (110, 130, 170)),
     ("MIDDLE EAST", (196, 150, 60)),
@@ -65,6 +66,7 @@ REGIONS = [
     ("EAST ASIA", (170, 60, 70)),
     ("OCEANIA", (60, 140, 170)),
     ("GLOBAL", (90, 90, 120)),
+    ("SPACE", (52, 58, 96)),
 ]
 
 # ---------------------------------------------------------------- glyphs
@@ -988,8 +990,9 @@ def draw_region_bar(c, y):
         c.rect(x, y, wseg - 1, 12, REGIONS[i][1])
         x += wseg
     # legend: dot + short name + count, evenly spaced
-    short = ["N.AMERICA", "S.AMERICA", "W.EUROPE", "E.EUROPE", "MID EAST",
-             "AFRICA", "S.ASIA", "SE.ASIA", "E.ASIA", "OCEANIA", "GLOBAL"]
+    short = ["N.AMERICA", "S.AMERICA", "N.EUROPE", "W.EUROPE", "E.EUROPE",
+             "MID EAST", "AFRICA", "S.ASIA", "SE.ASIA", "E.ASIA",
+             "OCEANIA", "GLOBAL", "SPACE"]
     present = [i for i, n in enumerate(counts) if n > 0]
     step = CW / len(present)
     for k, i in enumerate(present):

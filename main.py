@@ -69,6 +69,10 @@ REGIONS = [
     ("SPACE", (52, 58, 96)),
 ]
 
+REGION_SHORT = ["N.AMERICA", "S.AMERICA", "N.EUROPE", "W.EUROPE", "E.EUROPE",
+                "MID EAST", "AFRICA", "S.ASIA", "SE.ASIA", "E.ASIA",
+                "OCEANIA", "GLOBAL", "SPACE"]
+
 # ---------------------------------------------------------------- glyphs
 _GCACHE = {}
 
@@ -987,20 +991,17 @@ def draw_region_bar(c, y):
         if n == 0:
             continue
         wseg = CW * n / total
-        c.rect(x, y, wseg - 1, 12, REGIONS[i][1])
+        c.rect(x, y, wseg - 1, 16, REGIONS[i][1])
         x += wseg
-    # legend: dot + short name + count, evenly spaced
-    short = ["N.AMERICA", "S.AMERICA", "N.EUROPE", "W.EUROPE", "E.EUROPE",
-             "MID EAST", "AFRICA", "S.ASIA", "SE.ASIA", "E.ASIA",
-             "OCEANIA", "GLOBAL", "SPACE"]
+    # legend: big bold region labels, readable at thumbnail size
     present = [i for i, n in enumerate(counts) if n > 0]
     step = CW / len(present)
     for k, i in enumerate(present):
         lx = MX + step * k + 2
-        c.circle(lx + 3, y + 22, 3, REGIONS[i][1])
-        c.text(lx + 9, y + 25, "%s %d" % (short[i], counts[i]),
-               SANSB, SANSB_EM, SANSB_ASC, 7.4, INK, 0.2)
-    return y + 32
+        c.circle(lx + 4, y + 27, 4, REGIONS[i][1])
+        c.text(lx + 11, y + 31, "%s %d" % (REGION_SHORT[i], counts[i]),
+               SANSB, SANSB_EM, SANSB_ASC, 9.6, INK, 0.2)
+    return y + 36
 
 
 def draw_hero(c, x, y, w, h, num, s):
@@ -1018,9 +1019,9 @@ def draw_hero(c, x, y, w, h, num, s):
     c.circle(x + w - 16, y + 15, 10, INK)
     c.text_center(x + w - 16, y + 19.5, str(num), SANSB, SANSB_EM,
                   SANSB_ASC, 11, (250, 246, 230))
-    ty = y + sh + 15
-    c.text(x + 9, ty, "%s · %s" % (place, cat), SANSB, SANSB_EM, SANSB_ASC,
-           8.2, rcol, 0.5)
+    ty = y + sh + 16
+    c.text(x + 9, ty, "%s · %s · %s" % (REGION_SHORT[region], place, cat),
+           SANSB, SANSB_EM, SANSB_ASC, 9.6, rcol, 0.5)
     ty = c.para(x + 9, ty + 18, head, SERIF, SERIF_EM, SERIF_ASC, 17,
                 INK, w - 18, leading=19)
     ty = c.para(x + 9, ty + 0.5, summ, SANS, SANS_EM, SANS_ASC, 9.8,
@@ -1043,8 +1044,8 @@ def draw_grid_card(c, x, y, w, h, num, s):
     c.hline(x + 1, y + 1 + sh, w - 2, rcol, 2)
     draw_chip(c, x + 5, y + 5, chip)
     ty = y + sh + 11
-    c.text(x + 7, ty, "%s · %s" % (place, cat), SANSB, SANSB_EM, SANSB_ASC,
-           7.0, rcol, 0.4)
+    c.text(x + 7, ty, "%s · %s · %s" % (REGION_SHORT[region], place, cat),
+           SANSB, SANSB_EM, SANSB_ASC, 7.8, rcol, 0.3)
     ty = c.para(x + 7, ty + 11.5, head, SANSB, SANSB_EM, SANSB_ASC, 10.8,
                 INK, w - 14, leading=11.8)
     ty = c.para(x + 7, ty + 0.5, summ, SANS, SANS_EM, SANS_ASC, 8.2,

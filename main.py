@@ -472,16 +472,31 @@ def scene_ballot(c, x, y, w, h, rcol):
     c.polygon([(bx + bw / 2, by - bh * 0.52),
                (bx + bw / 2 + 12, by - bh * 0.46),
                (bx + bw / 2, by - bh * 0.4)], rcol)
-    # ballot box with paper, right foreground
-    kx = x + w * 0.68
-    ky = gy - h * 0.2
-    c.rect(kx, ky, w * 0.2, h * 0.2, (70, 74, 96))
-    c.rect(kx + w * 0.03, ky - 3, w * 0.14, 3, (40, 44, 62))
-    c.polygon([(kx + w * 0.06, ky - 3), (kx + w * 0.15, ky - 3),
-               (kx + w * 0.13, ky - h * 0.16), (kx + w * 0.08, ky - h * 0.16)],
-              WHITE)
-    c.hline(kx + w * 0.085, ky - h * 0.11, w * 0.04, GREY, 1)
-    c.hline(kx + w * 0.085, ky - h * 0.08, w * 0.04, GREY, 1)
+    # seat diagram panel, right: the deadlock in numbers —
+    # right bloc 65, left bloc 58, Opportunity 7 holds balance
+    px = x + w * 0.695
+    py = y + h * 0.1
+    pw = w * 0.285
+    ph = h * 0.58
+    c.rect(px, py, pw, ph, (250, 248, 240))
+    c.frame(px, py, pw, ph, INK, 1)
+    c.text_center(px + pw / 2, py + h * 0.11, "PARLIAMENT SEATS",
+                  SANSB, SANSB_EM, SANSB_ASC, 6.2, NAVY, 0.3)
+    blocs = [("RIGHT", 65, (50, 90, 170)), ("LEFT", 58, (200, 60, 50)),
+             ("OPPORTUNITY", 7, (240, 180, 60))]
+    barw = pw - 10
+    for i, (name, seats, col) in enumerate(blocs):
+        by2 = py + h * (0.19 + i * 0.135)
+        c.text(px + 5, by2, name, SANSB, SANSB_EM, SANSB_ASC, 5.6, INK, 0.1)
+        c.text_right(px + pw - 5, by2, str(seats), SANSB, SANSB_EM,
+                     SANSB_ASC, 8.5, col)
+        c.rect(px + 5, by2 + h * 0.025, barw * seats / 65, h * 0.05, col)
+    # majority marker: 66 seats to govern — neither bloc has it
+    mx2 = px + 5 + barw * 66 / 65
+    for i in range(4):
+        c.vline(mx2, py + h * (0.24 + i * 0.09), h * 0.05, INK, 1)
+    c.text(px + 5, py + h * 0.6, "66 TO GOVERN — NEITHER HAS IT",
+           SANSB, SANSB_EM, SANSB_ASC, 4.8, RED, 0.1)
     # voters queue
     for i in range(4):
         _person(c, x + w * (0.66 + i * 0.07), gy + h * 0.2, h * 0.11,
@@ -564,47 +579,68 @@ def scene_rocket(c, x, y, w, h, rcol):
 
 
 def scene_jets(c, x, y, w, h, rcol):
+    """Taiwan: island, median line, jets circling the island."""
     _sky(c, x, y, w, h)
-    _cloud(c, x + w * 0.25, y + h * 0.14, h * 0.05)
-    _cloud(c, x + w * 0.7, y + h * 0.1, h * 0.04)
-    sy = y + h * 0.62
-    _sea(c, x, sy, w, h * 0.38)
-    # island coastline, right
-    c.polygon([(x + w * 0.62, y + h), (x + w * 0.7, sy + h * 0.06),
-               (x + w * 0.86, sy - h * 0.04), (x + w, sy + h * 0.02),
-               (x + w, y + h)], LAND)
-    c.polygon([(x + w * 0.7, sy + h * 0.06), (x + w * 0.86, sy - h * 0.04),
-               (x + w, sy + h * 0.02), (x + w * 0.9, sy + h * 0.1)],
-              LAND_D)
-    _tree(c, x + w * 0.9, sy + h * 0.16, h * 0.22)
-    # three jets with contrails
-    for (jx, jy, s) in [(0.3, 0.3, 1.0), (0.48, 0.42, 0.8), (0.16, 0.48, 0.7)]:
-        px = x + w * jx
-        py = y + h * jy
-        u = h * 0.075 * s
-        c.line(px - u * 3.4, py + u * 0.9, px - u * 0.4, py + u * 0.15,
-               (245, 246, 248), 2)
-        c.polygon([(px, py), (px + u * 1.7, py - u * 0.35),
-                   (px + u * 0.9, py + u * 0.1), (px + u * 1.2, py + u * 0.6),
-                   (px + u * 0.2, py + u * 0.45)], SIL)
-        c.triangle(px + u * 0.5, py - u * 0.1, px + u * 0.1, py - u * 0.75,
-                   px + u * 0.95, py - u * 0.05, SIL)
-    # detail layer: sun, radar rings over island, patrol ship, gulls
     _sun(c, x + w * 0.08, y + h * 0.12, h * 0.06)
-    for rr in (0.1, 0.17, 0.24):
-        c.ring(x + w * 0.84, sy + h * 0.08, h * rr, (240, 120, 90), 1)
-    c.circle(x + w * 0.84, sy + h * 0.08, 2.2, (240, 120, 90))
-    shx = x + w * 0.18
-    shy = sy + h * 0.2
-    c.polygon([(shx, shy), (shx + w * 0.16, shy),
-               (shx + w * 0.14, shy + h * 0.06), (shx + w * 0.02, shy + h * 0.06)],
-              (70, 78, 96))
-    c.rect(shx + w * 0.05, shy - h * 0.05, w * 0.06, h * 0.05, WHITE)
-    for (gx2, gy2) in [(0.55, 0.16), (0.62, 0.12)]:
-        c.line(x + w * gx2 - 3, y + h * gy2, x + w * gx2, y + h * gy2 - 2,
-               SIL, 1)
-        c.line(x + w * gx2, y + h * gy2 - 2, x + w * gx2 + 3,
-               y + h * gy2, SIL, 1)
+    _cloud(c, x + w * 0.3, y + h * 0.12, h * 0.045)
+    sy = y + h * 0.55
+    _sea(c, x, sy, w, h * 0.45)
+    # mainland coast, far left
+    c.polygon([(x, y + h * 0.3), (x + w * 0.14, y + h * 0.42),
+               (x + w * 0.17, sy + h * 0.1), (x + w * 0.1, y + h),
+               (x, y + h)], LAND_D)
+    c.text(x + 3, y + h * 0.38, "MAINLAND", SANSB, SANSB_EM, SANSB_ASC,
+           5.2, (250, 248, 240), 0.2)
+    # Taiwan island: elongated, tilted, centre-right
+    isl = [(0.6, 0.14), (0.64, 0.26), (0.655, 0.42), (0.64, 0.6),
+           (0.615, 0.78), (0.585, 0.9), (0.565, 0.74), (0.555, 0.54),
+           (0.56, 0.34), (0.575, 0.2)]
+    c.polygon([(x + w * a, y + h * b) for (a, b) in isl], LAND)
+    c.polygon([(x + w * a, y + h * b) for (a, b) in
+               [(0.6, 0.2), (0.63, 0.34), (0.63, 0.52), (0.61, 0.68),
+                (0.59, 0.8), (0.58, 0.62), (0.575, 0.42), (0.58, 0.28)]],
+              LAND_D)
+    c.text_center(x + w * 0.605, y + h * 0.52, "TAIWAN", SANSB, SANSB_EM,
+                  SANSB_ASC, 6.0, (250, 248, 240), 0.2)
+    # median line of the strait: dashed, between mainland and island
+    mx2 = x + w * 0.37
+    for i in range(7):
+        c.vline(mx2, y + h * (0.08 + i * 0.12), h * 0.07, (220, 70, 60), 2)
+    c.text_center(mx2, y + h * 0.07, "MEDIAN LINE", SANSB, SANSB_EM,
+                  SANSB_ASC, 5.2, RED, 0.2)
+    # circling path around the island (dashed ellipse)
+    cx, cy = x + w * 0.605, y + h * 0.52
+    rx, ry = w * 0.3, h * 0.38
+    for i in range(28):
+        if i % 2:
+            continue
+        a0 = 2 * math.pi * i / 28
+        a1 = 2 * math.pi * (i + 1) / 28
+        c.line(cx + rx * math.cos(a0), cy + ry * math.sin(a0),
+               cx + rx * math.cos(a1), cy + ry * math.sin(a1),
+               (240, 120, 90), 1)
+    # eight jets flying the circle, noses along the tangent
+    for i in range(8):
+        a = 2 * math.pi * i / 8 + 0.4
+        px = cx + rx * math.cos(a)
+        py = cy + ry * math.sin(a)
+        tx2, ty2 = -rx * math.sin(a), ry * math.cos(a)
+        tl = math.hypot(tx2, ty2) or 1
+        tx2, ty2 = tx2 / tl, ty2 / tl
+        u = h * 0.055
+        nose = (px + tx2 * u * 1.5, py + ty2 * u * 1.5)
+        tail = (px - tx2 * u, py - ty2 * u)
+        w1 = (px - tx2 * u * 0.2 - ty2 * u, py - ty2 * u * 0.2 + tx2 * u)
+        w2 = (px - tx2 * u * 0.2 + ty2 * u, py - ty2 * u * 0.2 - tx2 * u)
+        c.polygon([nose, w1, tail, w2], SIL)
+        c.line(px - tx2 * u * 3.2, py - ty2 * u * 3.2, tail[0], tail[1],
+               (245, 246, 248), 1)
+    # three crossing arrows over the median line
+    for i, fy in enumerate((0.3, 0.5, 0.7)):
+        ay = y + h * fy
+        c.line(mx2 - w * 0.07, ay, mx2 + w * 0.07, ay, RED, 2)
+        c.polygon([(mx2 + w * 0.07, ay), (mx2 + w * 0.045, ay - 3),
+                   (mx2 + w * 0.045, ay + 3)], RED)
 
 
 def _grid_base(c, x, y, w, h, rcol, dark=False, dusk=False):

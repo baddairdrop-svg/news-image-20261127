@@ -401,9 +401,11 @@ SMOKE = (120, 122, 130)
 SIL = (38, 42, 58)
 
 
-def _sky(c, x, y, w, h, dark=False):
+def _sky(c, x, y, w, h, dark=False, dusk=False):
     if dark:
         c.vgrad(x, y, w, h, NIGHT_TOP, NIGHT_LOW)
+    elif dusk:
+        c.vgrad(x, y, w, h, (250, 176, 96), (238, 120, 92))
     else:
         c.vgrad(x, y, w, h, SKY_TOP, SKY_LOW)
 
@@ -605,8 +607,8 @@ def scene_jets(c, x, y, w, h, rcol):
                y + h * gy2, SIL, 1)
 
 
-def _grid_base(c, x, y, w, h, rcol, dark=False):
-    _sky(c, x, y, w, h, dark=dark)
+def _grid_base(c, x, y, w, h, rcol, dark=False, dusk=False):
+    _sky(c, x, y, w, h, dark=dark, dusk=dusk)
     return y + h * 0.74
 
 
@@ -645,6 +647,22 @@ def scene_prices(c, x, y, w, h, rcol):
                (x + w * 0.8, gy - h * 0.38)], (250, 220, 120))
     c.text_center(x + w * 0.865, gy - h * 0.42, "%", SANSB, SANSB_EM,
                   SANSB_ASC, h * 0.14, RED)
+    # Tokyo layer: lattice tower, price board with rising bars
+    twx = x + w * 0.47
+    c.polygon([(twx, gy), (twx + w * 0.05, gy), (twx + w * 0.03, gy - h * 0.72),
+               (twx + w * 0.02, gy - h * 0.72)], (200, 90, 80))
+    for i in range(4):
+        c.hline(twx + w * (0.006 + i * 0.002), gy - h * (0.16 + i * 0.16),
+                w * 0.04 - i * w * 0.004, (160, 60, 50), 1)
+    c.vline(twx + w * 0.025, gy - h * 0.86, h * 0.14, (160, 60, 50), 1)
+    bx2 = x + w * 0.6
+    by2 = gy - h * 0.34
+    c.rect(bx2, by2, w * 0.3, h * 0.26, (30, 36, 54))
+    for i, bh3 in enumerate((0.08, 0.13, 0.18, 0.22)):
+        c.rect(bx2 + w * (0.03 + i * 0.07), by2 + h * 0.24 - h * bh3,
+               w * 0.045, h * bh3, (140, 230, 160))
+    c.line(bx2 + w * 0.03, by2 + h * 0.18, bx2 + w * 0.27, by2 + h * 0.04,
+           (250, 214, 110), 2)
 
 
 def scene_tanker(c, x, y, w, h, rcol):
@@ -680,6 +698,17 @@ def scene_tanker(c, x, y, w, h, rcol):
                SIL, 1)
         c.line(x + w * gx2, y + h * gy2 - 2, x + w * gx2 + 3,
                y + h * gy2, SIL, 1)
+    # terminal layer: loading crane arm over the ship, jetty, pipes
+    crx = x + w * 0.62
+    c.vline(crx, sy - h * 0.62, h * 0.62, (90, 96, 112), 2)
+    c.line(crx, sy - h * 0.62, crx + w * 0.22, sy - h * 0.52, (90, 96, 112), 2)
+    c.line(crx + w * 0.2, sy - h * 0.53, crx + w * 0.2, sy - h * 0.3,
+           (90, 96, 112), 1)
+    c.rect(crx + w * 0.16, sy - h * 0.3, w * 0.08, h * 0.06, (240, 180, 80))
+    c.rect(x + w * 0.8, sy - h * 0.04, w * 0.2, h * 0.05, (110, 104, 96))
+    c.line(x + w * 0.88, sy - h * 0.2, hx + hw * 0.6, hy - h * 0.1,
+           (170, 176, 186), 2)
+    c.circle(hx + hw * 0.35, hy - h * 0.2, h * 0.04, (250, 240, 200))
 
 
 def scene_fire(c, x, y, w, h, rcol):
@@ -717,6 +746,23 @@ def scene_fire(c, x, y, w, h, rcol):
     for i in range(3):
         c.rect(x + w * (0.1 + i * 0.3), gy - h * 0.1, w * 0.16, h * 0.05,
                (120, 90, 60))
+    # fire-truck layer: engine with ladder, bigger smoke columns
+    trx = x + w * 0.72
+    try_ = gy + h * 0.02
+    c.rect(trx, try_, w * 0.24, h * 0.16, (210, 60, 50))
+    c.rect(trx + w * 0.17, try_ - h * 0.08, w * 0.07, h * 0.1, (210, 60, 50))
+    c.rect(trx + w * 0.185, try_ - h * 0.06, w * 0.04, h * 0.05,
+           (200, 224, 238))
+    c.line(trx + w * 0.03, try_, trx + w * 0.2, try_ - h * 0.22,
+           (200, 204, 212), 2)
+    c.circle(trx + w * 0.05, try_ + h * 0.17, h * 0.045, (30, 30, 36))
+    c.circle(trx + w * 0.19, try_ + h * 0.17, h * 0.045, (30, 30, 36))
+    c.circle(trx + w * 0.1, try_ - h * 0.03, 2, (120, 180, 250))
+    for i in range(3):
+        c.circle(x + w * (0.3 + i * 0.22), y + h * 0.1, h * 0.09,
+                 (100, 102, 110))
+        c.circle(x + w * (0.36 + i * 0.22), y + h * 0.06, h * 0.07,
+                 (120, 122, 130))
 
 
 def scene_court(c, x, y, w, h, rcol):
@@ -755,6 +801,13 @@ def scene_court(c, x, y, w, h, rcol):
     for i in range(3):
         _person(c, bx + bw * (0.2 + i * 0.3), gy + h * 0.16, h * 0.12,
                 SIL if i % 2 else (70, 60, 80))
+    # gavel layer: judge's gavel and sound block, foreground right
+    gx2 = x + w * 0.82
+    gy2 = gy + h * 0.1
+    c.line(gx2, gy2, gx2 + w * 0.1, gy2 - h * 0.2, (120, 84, 50), 3)
+    c.rect(gx2 + w * 0.07, gy2 - h * 0.27, w * 0.09, h * 0.09, (90, 62, 36))
+    c.rect(gx2 - w * 0.02, gy2 + h * 0.02, w * 0.12, h * 0.04, (90, 62, 36))
+    c.circle(bx + bw / 2, by - h * 0.1, w * 0.03, GOLD)
 
 
 def scene_fence(c, x, y, w, h, rcol):
@@ -815,6 +868,18 @@ def scene_tube(c, x, y, w, h, rcol):
            (250, 232, 170))
     c.rect(tx + tw * 0.66, ty + th * 0.32, tw * 0.08, th * 0.16,
            (250, 232, 170))
+    # side-carriage layer: carriage stretching right with lit windows
+    sx2 = tx + tw * 0.98
+    c.rect(sx2, ty + th * 0.08, w * 0.16, th * 0.84, (176, 52, 46))
+    for i in range(2):
+        c.rect(sx2 + w * (0.02 + i * 0.07), ty + th * 0.3, w * 0.05,
+               th * 0.3, (250, 232, 170))
+        c.circle(sx2 + w * (0.045 + i * 0.07), ty + th * 0.42, th * 0.06,
+                 SIL)
+    c.rect(sx2, ty + th * 0.62, w * 0.16, th * 0.08, (240, 238, 230))
+    # big foreground silhouettes of waiting passengers, left
+    _person(c, x + w * 0.05, y + h * 0.98, h * 0.3, (24, 26, 34))
+    _person(c, x + w * 0.13, y + h * 0.98, h * 0.26, (34, 36, 46))
 
 
 def scene_car(c, x, y, w, h, rcol):
@@ -910,6 +975,15 @@ def scene_ferry(c, x, y, w, h, rcol):
     c.rect(lx, sy - h * 0.52, w * 0.045, h * 0.06, (200, 70, 60))
     c.rect(lx, sy - h * 0.4, w * 0.045, h * 0.05, (200, 70, 60))
     c.circle(lx + w * 0.022, sy - h * 0.55, 2.4, (252, 232, 160))
+    # impact layer: splash where the bow meets the pier, foam arcs
+    ix = fx + fw * 0.98
+    iy = fy + h * 0.08
+    for i in range(5):
+        c.line(ix, iy, ix + w * (0.02 + i * 0.012), iy - h * (0.1 + (i % 3) * 0.05),
+               (220, 240, 250), 2)
+    c.circle(ix + w * 0.03, iy - h * 0.04, h * 0.05, (220, 240, 250))
+    c.circle(ix + w * 0.05, iy + h * 0.02, h * 0.04, (200, 230, 246))
+    c.line(px, sy - h * 0.3, px + w * 0.04, sy - h * 0.22, (60, 54, 46), 2)
 
 
 def scene_flags(c, x, y, w, h, rcol):
@@ -934,6 +1008,18 @@ def scene_flags(c, x, y, w, h, rcol):
         c.triangle(fx2 + w * 0.06, gy - h * 0.6, fx2 + w * 0.1, gy - h * 0.6,
                    fx2 + w * 0.08, gy - h * 0.52, cols[i % len(cols)])
     c.rect(x, gy + h * 0.2, w, h * 0.06, SEA_C)
+    # summit layer: long conference table with seated delegates
+    tbx = x + w * 0.12
+    tby = gy + h * 0.06
+    c.polygon([(tbx, tby), (tbx + w * 0.76, tby), (tbx + w * 0.82, tby + h * 0.1),
+               (tbx - w * 0.06, tby + h * 0.1)], (110, 80, 56))
+    for i in range(5):
+        dx = tbx + w * (0.08 + i * 0.15)
+        c.circle(dx, tby - h * 0.05, h * 0.035, SIL)
+        c.rect(dx - w * 0.02, tby - h * 0.03, w * 0.04, h * 0.05, SIL)
+        c.rect(dx - w * 0.025, tby + h * 0.03, w * 0.05, h * 0.03, WHITE)
+    c.rect(tbx + w * 0.34, tby - h * 0.12, w * 0.08, h * 0.05,
+           (250, 232, 170))
 
 
 def scene_shoppers(c, x, y, w, h, rcol):
@@ -966,6 +1052,17 @@ def scene_shoppers(c, x, y, w, h, rcol):
                h * 0.1, (200, 120, 90))
     for i, fx in enumerate([0.22, 0.54, 0.7]):
         _person(c, x + w * fx, gy + h * 0.24, h * 0.1, (60, 70, 100))
+    # sale layer: giant hanging % signs and stacked shopping bags
+    for i in range(2):
+        hx2 = sx + sw * (0.18 + i * 0.5)
+        c.vline(hx2, sy + h * 0.12, h * 0.08, SIL, 1)
+        c.rect(hx2 - w * 0.045, sy + h * 0.2, w * 0.09, h * 0.14,
+               (220, 60, 60))
+        c.text_center(hx2, sy + h * 0.3, "%", SANSB, SANSB_EM, SANSB_ASC,
+                      h * 0.11, WHITE)
+    for i in range(3):
+        c.rect(x + w * (0.84 + i * 0.04), gy + h * (0.1 - i * 0.03),
+               w * 0.045, h * 0.09, (240, 200, 90) if i % 2 else (120, 180, 220))
 
 
 def scene_stars(c, x, y, w, h, rcol):
@@ -1006,10 +1103,20 @@ def scene_stars(c, x, y, w, h, rcol):
     for i in range(3):
         _person(c, x + w * (0.3 + i * 0.18), gy + h * 0.2, h * 0.12,
                 SIL if i % 2 else (70, 60, 80))
+    # parliament layer: stepped curved facade wings, seat rows
+    for i in range(3):
+        c.rect(bx - w * (0.05 + i * 0.035), by + h * (0.1 + i * 0.12),
+               w * 0.05, h * (0.4 - i * 0.12), (110, 124, 152))
+        c.rect(bx + bw + i * w * 0.035, by + h * (0.1 + i * 0.12),
+               w * 0.05, h * (0.4 - i * 0.12), (110, 124, 152))
+    for r in range(2):
+        for i in range(7):
+            c.circle(x + w * (0.3 + i * 0.06), gy + h * (0.08 + r * 0.06),
+                     1.8, (90, 110, 170) if (i + r) % 2 else (200, 120, 90))
 
 
 def scene_f1car(c, x, y, w, h, rcol):
-    gy = _grid_base(c, x, y, w, h, rcol)
+    gy = _grid_base(c, x, y, w, h, rcol, dusk=True)
     c.rect(x, gy, w, h * 0.26, (92, 90, 96))
     c.hline(x, gy + h * 0.1, w, (240, 236, 214), 1)
     # speed lines
@@ -1048,39 +1155,115 @@ def scene_f1car(c, x, y, w, h, rcol):
             c.rect(fx2 + col * w * 0.03, gy - h * 0.5 + r * h * 0.045,
                    w * 0.03, h * 0.045,
                    (30, 30, 36) if (r + col) % 2 else WHITE)
+    # race layer: start-lights gantry, second car behind, sunset sun
+    _sun(c, x + w * 0.9, y + h * 0.3, h * 0.07)
+    gx2 = x + w * 0.55
+    c.vline(gx2, gy - h * 0.56, h * 0.56, (60, 64, 76), 2)
+    c.vline(gx2 + w * 0.3, gy - h * 0.56, h * 0.56, (60, 64, 76), 2)
+    c.rect(gx2, gy - h * 0.6, w * 0.3, h * 0.09, (30, 32, 40))
+    for i in range(4):
+        c.circle(gx2 + w * (0.05 + i * 0.07), gy - h * 0.555, 2.2,
+                 (140, 230, 160) if i < 3 else (240, 90, 80))
+    cx2 = x + w * 0.06
+    cy2 = gy + h * 0.02
+    c.polygon([(cx2, cy2), (cx2 + w * 0.1, cy2 - h * 0.07),
+               (cx2 + w * 0.2, cy2 - h * 0.09), (cx2 + w * 0.26, cy2)],
+              (60, 90, 170))
+    c.circle(cx2 + w * 0.06, cy2 + 1, h * 0.06, (24, 24, 30))
+    c.circle(cx2 + w * 0.2, cy2 + 1, h * 0.06, (24, 24, 30))
 
 
 def scene_chart(c, x, y, w, h, rcol):
+    """Wall Street: exchange facade, ticker board, rising arrow."""
     gy = _grid_base(c, x, y, w, h, rcol)
     c.rect(x, gy, w, h * 0.26, (170, 166, 156))
-    # rising bars
-    bx = x + w * 0.1
-    bw = w * 0.13
-    for i, bh in enumerate((0.18, 0.3, 0.42, 0.58)):
-        c.rect(bx + i * (bw + w * 0.05), gy - h * bh, bw, h * bh,
-               (128, 124, 118) if i < 3 else rcol)
-    # trend line with arrow head
-    pts = [(bx, gy - h * 0.22), (bx + (bw + w * 0.05), gy - h * 0.36),
-           (bx + 2 * (bw + w * 0.05), gy - h * 0.48),
-           (bx + 3 * (bw + w * 0.05) + bw * 0.6, gy - h * 0.66)]
-    for i in range(len(pts) - 1):
-        c.line(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1],
-               (178, 84, 52), 2)
-    ax, ay = pts[-1]
-    c.polygon([(ax, ay), (ax - w * 0.05, ay + h * 0.02),
-               (ax - w * 0.01, ay + h * 0.1)], (178, 84, 52))
-    # detail layer: skyline behind bars, gold coins, ticker dots
-    for i, bh2 in enumerate((0.34, 0.5, 0.42, 0.62, 0.46)):
-        c.rect(x + w * (0.04 + i * 0.19), gy - h * bh2, w * 0.12, h * bh2,
+    # skyline behind
+    for i, bh2 in enumerate((0.4, 0.58, 0.46, 0.66, 0.5)):
+        c.rect(x + w * (0.02 + i * 0.19), gy - h * bh2, w * 0.13, h * bh2,
                (150, 160, 184))
+    # exchange facade: pediment + columns, centre
+    bx = x + w * 0.3
+    bw = w * 0.44
+    by = gy - h * 0.5
+    c.triangle(bx - 3, by, bx + bw + 3, by, bx + bw / 2, by - h * 0.18,
+               STONE_D)
+    c.rect(bx, by, bw, h * 0.05, STONE_D)
+    for i in range(5):
+        c.rect(bx + 3 + i * (bw - 6) / 5, by + h * 0.07, w * 0.035,
+               h * 0.36, (238, 234, 222))
+    c.rect(bx, gy - h * 0.05, bw, h * 0.05, STONE_D)
+    c.vline(bx + bw / 2, by - h * 0.3, h * 0.12, SIL, 1)
+    c.polygon([(bx + bw / 2, by - h * 0.3), (bx + bw / 2 + w * 0.08, by - h * 0.27),
+               (bx + bw / 2, by - h * 0.23)], (200, 70, 60))
+    # ticker board, left, with green rising line
+    tx = x + w * 0.04
+    ty = gy - h * 0.44
+    c.rect(tx, ty, w * 0.22, h * 0.34, (26, 34, 30))
+    c.line(tx + w * 0.02, ty + h * 0.26, tx + w * 0.09, ty + h * 0.18,
+           (140, 230, 160), 2)
+    c.line(tx + w * 0.09, ty + h * 0.18, tx + w * 0.14, ty + h * 0.22,
+           (140, 230, 160), 2)
+    c.line(tx + w * 0.14, ty + h * 0.22, tx + w * 0.2, ty + h * 0.07,
+           (140, 230, 160), 2)
     for i in range(3):
-        c.circle(x + w * (0.82 + i * 0.06), gy - h * (0.08 + i * 0.05),
-                 h * 0.045, (252, 214, 110))
-        c.ring(x + w * (0.82 + i * 0.06), gy - h * (0.08 + i * 0.05),
-               h * 0.045, (196, 150, 50), 1)
-    for i in range(6):
-        c.circle(x + w * (0.08 + i * 0.15), y + h * 0.08, 1.6,
-                 (140, 220, 150) if i % 2 else (240, 130, 110))
+        c.hline(tx + w * 0.02, ty + h * (0.06 + i * 0.05), w * 0.07,
+               (140, 230, 160), 1)
+    # big rising arrow, right
+    c.line(x + w * 0.78, gy - h * 0.1, x + w * 0.94, gy - h * 0.44,
+           (60, 170, 90), 3)
+    c.polygon([(x + w * 0.94, gy - h * 0.44), (x + w * 0.88, gy - h * 0.42),
+               (x + w * 0.92, gy - h * 0.34)], (60, 170, 90))
+    # gold coins at the steps
+    for i in range(3):
+        c.circle(x + w * (0.36 + i * 0.12), gy + h * 0.1, h * 0.04,
+                 (252, 214, 110))
+        c.ring(x + w * (0.36 + i * 0.12), gy + h * 0.1, h * 0.04,
+               (196, 150, 50), 1)
+
+
+def scene_market(c, x, y, w, h, rcol):
+    """Spain CPI: supermarket front, shelves, cart, price tags."""
+    gy = _grid_base(c, x, y, w, h, rcol)
+    c.rect(x, gy, w, h * 0.26, (206, 198, 182))
+    sx = x + w * 0.06
+    sw = w * 0.62
+    sy = gy - h * 0.56
+    c.rect(sx, sy, sw, h * 0.56, (168, 160, 148))
+    c.rect(sx, sy, sw, h * 0.12, (210, 90, 60))
+    for i in range(4):
+        c.rect(sx + sw * (0.05 + i * 0.24), sy + h * 0.12, sw * 0.2,
+               h * 0.07, WHITE if i % 2 else (220, 90, 80))
+    # shelves with colourful goods inside the windows
+    for r in range(2):
+        for i in range(6):
+            gx2 = sx + sw * (0.06 + i * 0.15)
+            gy2 = sy + h * (0.24 + r * 0.16)
+            c.rect(gx2, gy2, sw * 0.11, h * 0.1,
+                   [(220, 120, 80), (120, 180, 90), (240, 200, 90),
+                    (120, 160, 220)][(i + r) % 4])
+        c.hline(sx + sw * 0.04, sy + h * (0.36 + r * 0.16), sw * 0.9,
+                (90, 84, 76), 1)
+    # shopping cart with bags, right foreground
+    cx = x + w * 0.74
+    cy = gy + h * 0.02
+    c.polygon([(cx, cy - h * 0.2), (cx + w * 0.2, cy - h * 0.2),
+               (cx + w * 0.17, cy - h * 0.04), (cx + w * 0.03, cy - h * 0.04)],
+              (120, 126, 138))
+    c.rect(cx + w * 0.04, cy - h * 0.28, w * 0.07, h * 0.1, (240, 200, 90))
+    c.rect(cx + w * 0.12, cy - h * 0.26, w * 0.06, h * 0.08, (120, 180, 90))
+    c.circle(cx + w * 0.05, cy + h * 0.02, h * 0.035, (40, 42, 50))
+    c.circle(cx + w * 0.16, cy + h * 0.02, h * 0.035, (40, 42, 50))
+    c.line(cx + w * 0.2, cy - h * 0.2, cx + w * 0.24, cy - h * 0.26, SIL, 2)
+    _person(c, cx + w * 0.27, gy + h * 0.16, h * 0.16, (90, 60, 90))
+    # hanging price tags over the shelves
+    for i in range(3):
+        tx = sx + sw * (0.14 + i * 0.3)
+        c.vline(tx, sy + h * 0.19, h * 0.06, SIL, 1)
+        c.polygon([(tx - w * 0.03, sy + h * 0.25), (tx + w * 0.03, sy + h * 0.25),
+                   (tx + w * 0.03, sy + h * 0.35), (tx, sy + h * 0.39),
+                   (tx - w * 0.03, sy + h * 0.35)], (250, 240, 200))
+        c.text_center(tx, sy + h * 0.325, "%", SANSB, SANSB_EM, SANSB_ASC,
+                      h * 0.09, RED)
 
 
 SCENES = {
@@ -1089,7 +1272,7 @@ SCENES = {
     "court": scene_court, "fence": scene_fence, "tube": scene_tube,
     "car": scene_car, "vote": scene_vote, "ferry": scene_ferry,
     "flags": scene_flags, "shoppers": scene_shoppers, "stars": scene_stars,
-    "f1car": scene_f1car, "chart": scene_chart,
+    "f1car": scene_f1car, "chart": scene_chart, "market": scene_market,
 }
 
 # ---------------------------------------------------------------- world map
@@ -1319,7 +1502,7 @@ def draw_hero(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 84
+    sh = 62
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1331,8 +1514,8 @@ def draw_hero(c, x, y, w, h, num, s):
     ty = y + sh + 16
     c.text(x + 9, ty, "%s · %s · %s" % (REGION_SHORT[region], place, cat),
            SANSB, SANSB_EM, SANSB_ASC, 9.6, rcol, 0.5)
-    ty = c.para(x + 9, ty + 16, head, SERIF, SERIF_EM, SERIF_ASC, 16,
-                INK, w - 18, leading=16.2)
+    ty = c.para(x + 9, ty + 15, head, SERIF, SERIF_EM, SERIF_ASC, 16,
+                INK, w - 18, leading=15.6)
     ty = c.para(x + 9, ty + 0.5, summ, SANS, SANS_EM, SANS_ASC, 9.8,
                 (52, 56, 68), w - 18, leading=11.0)
     by = y + h - 15
@@ -1346,7 +1529,7 @@ def draw_grid_card(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 30
+    sh = 46
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1456,7 +1639,7 @@ def draw_also(c, y, budget_h):
                    SANSB, SANSB_EM, SANSB_ASC, 7.8, INK, 0.1)
             c.text(cx + 19, cy + 9.5, "%s · %s" % (s[2], s[6]),
                    SANS, SANS_EM, SANS_ASC, 6.8, GREY, 0.2)
-            cy += 23
+            cy += 21
     return y + budget_h
 
 
@@ -1482,7 +1665,7 @@ def draw_datecheck(c, y):
     colw = CW / cols
     per = (len(DATECHECK) + cols - 1) // cols
     size = 8.0
-    leading = 7.6
+    leading = 7.2
     for ci in range(cols):
         cx = MX + ci * colw
         cy = y + 24
@@ -1528,16 +1711,16 @@ def build():
     heroes = stories_of("hero")
     hw = (CW - 20) / 3
     for i, s in enumerate(heroes):
-        draw_hero(c, MX + i * (hw + 10), 256, hw, 170, i + 1, s)
+        draw_hero(c, MX + i * (hw + 10), 256, hw, 146, i + 1, s)
 
     grid = stories_of("grid")
     gw = (CW - 30) / 4
     for i, s in enumerate(grid):
         gx = MX + (i % 4) * (gw + 10)
-        gy = 432 + (i // 4) * 88
-        draw_grid_card(c, gx, gy, gw, 84, i + 4, s)
+        gy = 408 + (i // 4) * 104
+        draw_grid_card(c, gx, gy, gw, 100, i + 4, s)
 
-    draw_also(c, 698, 134)          # numbered 16..28, flags
+    draw_also(c, 722, 132)          # numbered 16..28, flags
 
     # numbered map pins for every story that has a place;
     # duplicate coordinates nudge apart so numbers stay readable
@@ -1551,13 +1734,13 @@ def build():
         seen[(lon, lat)] = k + 1
         pins.append((lon + k * 1.6, lat - k * 1.1,
                      REGIONS[s[7]][1], num))
-    draw_map(c, MX, 838, CW, 112, pins)
-    c.rect(MX + 4, 842, 214, 12, PAPER)
-    c.text(MX + 8, 851, "WHERE IT HAPPENED · NUMBERS = STORIES",
+    draw_map(c, MX, 858, CW, 92, pins)
+    c.rect(MX + 4, 862, 214, 12, PAPER)
+    c.text(MX + 8, 871, "WHERE IT HAPPENED · NUMBERS = STORIES",
            SANSB, SANSB_EM, SANSB_ASC, 7.0, NAVY, 0.3)
 
     draw_datecheck(c, 956)
-    draw_footer(c, 1010)
+    draw_footer(c, 1011)
     return c
 
 

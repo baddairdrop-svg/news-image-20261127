@@ -106,7 +106,7 @@ STORIES = [
      "Dow 50,780.64 (+1.19%); Nasdaq +2.31%.",
      "REUTERS", 0, "Markets", "REPORTED", "DOW 50,781",
      (-74.0, 40.7)),
-    ("grid", "prices", "MADRID", "ECONOMY",
+    ("grid", "market", "MADRID", "ECONOMY",
      "Spain inflation 4.1% in flash reading",
      "CPI 4.1% YoY; core 2.6% (INE, Friday).",
      "INE", 3, "Economy", "OFFICIAL", "4.1%", (-3.7, 40.4)),

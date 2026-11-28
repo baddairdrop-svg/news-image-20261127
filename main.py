@@ -1538,7 +1538,7 @@ def draw_hero(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 62
+    sh = 76
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1565,7 +1565,7 @@ def draw_grid_card(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 46
+    sh = 56
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1656,15 +1656,15 @@ def draw_flag(c, x, y, place):
 
 def draw_also(c, y, budget_h):
     items = stories_of("also")
-    c.text(MX, y + 10, "ALSO TODAY — MORE VERIFIED STORIES",
-           SANSB, SANSB_EM, SANSB_ASC, 10, NAVY, 0.5)
-    c.hline(MX, y + 14, CW, RULE, 1)
+    c.text(MX, y + 9, "ALSO TODAY — MORE VERIFIED STORIES",
+           SANSB, SANSB_EM, SANSB_ASC, 9, NAVY, 0.5)
+    c.hline(MX, y + 13, CW, RULE, 1)
     cols = 3
     gap = 14
     colw = (CW - gap * (cols - 1)) / cols
     # sequential columns keep the numbering readable top-down
     per = (len(items) + cols - 1) // cols
-    top = y + 30
+    top = y + 26
     for ci in range(cols):
         cx = MX + ci * (colw + gap)
         cy = top
@@ -1672,10 +1672,10 @@ def draw_also(c, y, budget_h):
             num = 16 + items.index(s)
             draw_flag(c, cx, cy - 8, s[2])
             c.text(cx + 19, cy, "%d. %s" % (num, s[4]),
-                   SANSB, SANSB_EM, SANSB_ASC, 7.8, INK, 0.1)
-            c.text(cx + 19, cy + 9.5, "%s · %s" % (s[2], s[6]),
-                   SANS, SANS_EM, SANS_ASC, 6.8, GREY, 0.2)
-            cy += 21
+                   SANSB, SANSB_EM, SANSB_ASC, 7.2, INK, 0.1)
+            c.text(cx + 19, cy + 8.5, "%s · %s" % (s[2], s[6]),
+                   SANS, SANS_EM, SANS_ASC, 6.2, GREY, 0.2)
+            cy += 17
     return y + budget_h
 
 
@@ -1701,7 +1701,7 @@ def draw_datecheck(c, y):
     colw = CW / cols
     per = (len(DATECHECK) + cols - 1) // cols
     size = 8.0
-    leading = 7.2
+    leading = 7.0
     for ci in range(cols):
         cx = MX + ci * colw
         cy = y + 24
@@ -1742,21 +1742,21 @@ def build():
     c = Canvas(W, H, PAPER)
     draw_top(c)                     # masthead + counts + numbers panel
     y = draw_region_bar(c, 176)     # region pills strip -> 212
-    draw_timeline(c, 216)           # UTC strip, ends ~250
+    draw_timeline(c, 214)           # UTC strip, ends ~248
 
     heroes = stories_of("hero")
     hw = (CW - 20) / 3
     for i, s in enumerate(heroes):
-        draw_hero(c, MX + i * (hw + 10), 256, hw, 146, i + 1, s)
+        draw_hero(c, MX + i * (hw + 10), 252, hw, 160, i + 1, s)
 
     grid = stories_of("grid")
     gw = (CW - 30) / 4
     for i, s in enumerate(grid):
         gx = MX + (i % 4) * (gw + 10)
-        gy = 408 + (i // 4) * 104
-        draw_grid_card(c, gx, gy, gw, 100, i + 4, s)
+        gy = 416 + (i // 4) * 114
+        draw_grid_card(c, gx, gy, gw, 110, i + 4, s)
 
-    draw_also(c, 722, 132)          # numbered 16..28, flags
+    draw_also(c, 758, 108)          # numbered 16..28, flags
 
     # numbered map pins for every story that has a place;
     # duplicate coordinates nudge apart so numbers stay readable
@@ -1770,12 +1770,12 @@ def build():
         seen[(lon, lat)] = k + 1
         pins.append((lon + k * 1.6, lat - k * 1.1,
                      REGIONS[s[7]][1], num))
-    draw_map(c, MX, 858, CW, 92, pins)
-    c.rect(MX + 4, 862, 214, 12, PAPER)
-    c.text(MX + 8, 871, "WHERE IT HAPPENED · NUMBERS = STORIES",
+    draw_map(c, MX, 870, CW, 84, pins)
+    c.rect(MX + 4, 874, 214, 12, PAPER)
+    c.text(MX + 8, 883, "WHERE IT HAPPENED · NUMBERS = STORIES",
            SANSB, SANSB_EM, SANSB_ASC, 7.0, NAVY, 0.3)
 
-    draw_datecheck(c, 956)
+    draw_datecheck(c, 958)
     draw_footer(c, 1011)
     return c
 

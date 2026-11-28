@@ -35,7 +35,7 @@ from glyphs import (SERIF, SERIF_ASC, SERIF_DESC, SERIF_EM,
                     SERIFR, SERIFR_ASC, SERIFR_DESC, SERIFR_EM,
                     SANS, SANS_ASC, SANS_DESC, SANS_EM,
                     SANSB, SANSB_ASC, SANSB_DESC, SANSB_EM)
-from stories import STORIES, TIMELINE, DATECHECK
+from stories import STORIES, TIMELINE, DATECHECK, NUMBERS
 
 W = 1024
 H = 1024
@@ -945,11 +945,13 @@ def draw_map(c, x, y, w, h, pins):
             if ch2 != " ":
                 c.rect(x + i * cw, y + r * ch, cw + 0.6, ch + 0.6,
                        (148, 164, 118))
-    for (lon, lat, rcol) in pins:
+    for (lon, lat, rcol, num) in pins:
         px = x + (lon + 180) / 360 * w
         py = y + (75 - lat) / 135 * h
-        c.circle(px, py, 3.4, WHITE)
-        c.circle(px, py, 2.4, rcol)
+        c.circle(px, py, 5.0, WHITE)
+        c.circle(px, py, 4.2, rcol)
+        c.text_center(px, py + 2.0, str(num), SANSB, SANSB_EM,
+                      SANSB_ASC, 5.6, WHITE)
 
 
 # ---------------------------------------------------------------- layout
@@ -1076,7 +1078,7 @@ def draw_hero(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 84
+    sh = 96
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1103,7 +1105,7 @@ def draw_grid_card(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 30
+    sh = 38
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1134,27 +1136,29 @@ def draw_also(c, y, budget_h):
     # measure each item (place prefix + wrapped headline), then
     # balance columns by measured height so no column overflows
     measured = []
-    for s in items:
+    for idx, s in enumerate(items):
         txt = s[4]
         lines = wrap_text(txt, SANS, SANS_EM, size, colw - 52)
-        measured.append((s, lines))
+        measured.append((idx, s, lines))
     columns = [[] for _ in range(cols)]
     heights = [0.0] * cols
-    for (s, lines) in measured:
+    for (idx, s, lines) in measured:
         k = heights.index(min(heights))
-        columns[k].append((s, lines))
+        columns[k].append((idx, s, lines))
         heights[k] += len(lines) * leading + 0.6
     top = y + 20
     for ci in range(cols):
         cx = MX + ci * (colw + gap)
         cy = top
-        for (s, lines) in columns[ci]:
+        for (idx, s, lines) in columns[ci]:
             rcol = REGIONS[s[7]][1]
-            c.circle(cx + 3, cy - 2.6, 2.4, rcol)
-            c.text(cx + 9, cy, s[2], SANSB, SANSB_EM, SANSB_ASC, 7.0,
+            num = 16 + idx
+            c.text(cx, cy, "%d." % num, SANSB, SANSB_EM, SANSB_ASC,
+                   7.3, rcol, 0.2)
+            c.text(cx + 14, cy, s[2], SANSB, SANSB_EM, SANSB_ASC, 7.0,
                    rcol, 0.2)
             pw = text_width(s[2], SANSB, SANSB_EM, 7.0, 0.2)
-            lx = cx + 9 + pw + 5
+            lx = cx + 14 + pw + 5
             avail = cx + colw - lx
             first = wrap_text(s[4], SANS, SANS_EM, size, avail)
             rest = []
@@ -1167,10 +1171,29 @@ def draw_also(c, y, budget_h):
                 c.text(lx, cy, first[0], SANS, SANS_EM, SANS_ASC, size, INK)
                 cy += leading
             for ln in rest:
-                c.text(cx + 9, cy, ln, SANS, SANS_EM, SANS_ASC, size, INK)
+                c.text(cx + 14, cy, ln, SANS, SANS_EM, SANS_ASC, size, INK)
                 cy += leading
             cy += 0.6
     return y + budget_h
+
+
+def draw_numbers(c, y):
+    """THE DAY IN NUMBERS: verified closing figures, six cells."""
+    c.text(MX, y + 10, "THE DAY IN NUMBERS — CLOSING FIGURES",
+           SANSB, SANSB_EM, SANSB_ASC, 10, NAVY, 0.5)
+    c.text_right(MX + CW, y + 10, "REUTERS · COINDESK",
+                 SANSB, SANSB_EM, SANSB_ASC, 7.2, GREY, 0.4)
+    c.hline(MX, y + 14, CW, RULE, 1)
+    qw = CW / len(NUMBERS)
+    for i, (value, label) in enumerate(NUMBERS):
+        cx = MX + qw * i + qw / 2
+        c.text_center(cx, y + 34, value, SERIF, SERIF_EM, SERIF_ASC,
+                      16, NAVY)
+        c.text_center(cx, y + 46, label, SANSB, SANSB_EM, SANSB_ASC,
+                      6.8, GREY, 0.3)
+        if i:
+            c.vline(MX + qw * i, y + 18, 30, RULE, 1)
+    return y + 52
 
 
 def draw_timeline(c, y):
@@ -1221,7 +1244,9 @@ def _validate():
     heroes = stories_of("hero")
     grid = stories_of("grid")
     assert len(heroes) == 3, "need exactly 3 heroes"
-    assert len(grid) == 16, "need exactly 16 grid cards"
+    assert len(grid) == 12, "need exactly 12 grid cards"
+    assert len(stories_of("also")) == 21, "need exactly 21 ALSO lines"
+    assert len(STORIES) == 36, "need exactly 36 stories"
     for s in heroes + grid:
         assert s[1] in SCENES, "unknown art: %s" % s[1]
     for s in STORIES:
@@ -1234,31 +1259,43 @@ def build():
     c = Canvas(W, H, PAPER)
     draw_top(c)
     y = draw_stats(c, 128)          # -> 166
-    y = draw_region_bar(c, 168)     # -> 200
+    y = draw_region_bar(c, 168)     # -> 204
+    draw_timeline(c, 206)           # UTC strip, ends ~240
 
     heroes = stories_of("hero")
     hw = (CW - 20) / 3
     for i, s in enumerate(heroes):
-        draw_hero(c, MX + i * (hw + 10), 204, hw, 180, i + 1, s)
+        draw_hero(c, MX + i * (hw + 10), 246, hw, 196, i + 1, s)
 
     grid = stories_of("grid")
     gw = (CW - 30) / 4
     for i, s in enumerate(grid):
         gx = MX + (i % 4) * (gw + 10)
-        gy = 388 + (i // 4) * 89
-        draw_grid_card(c, gx, gy, gw, 88, i + 4, s)
+        gy = 448 + (i // 4) * 100
+        draw_grid_card(c, gx, gy, gw, 96, i + 4, s)
 
-    pins = [(s[11][0], s[11][1], REGIONS[s[7]][1])
-            for s in heroes + grid if s[11] is not None]
-    draw_map(c, MX, 747, CW, 24, pins)
-    c.rect(MX + 4, 750, 196, 12, PAPER)
-    c.text(MX + 8, 759, "WHERE IT HAPPENED · PINS = ILLUSTRATED STORIES",
+    draw_numbers(c, 754)            # ends 806
+    draw_also(c, 812, 100)          # numbered 16..36
+
+    # numbered map pins for every story that has a place;
+    # duplicate coordinates nudge apart so numbers stay readable
+    pins = []
+    seen = {}
+    for num, s in enumerate(STORIES, start=1):
+        if s[11] is None:
+            continue
+        lon, lat = s[11]
+        k = seen.get((lon, lat), 0)
+        seen[(lon, lat)] = k + 1
+        pins.append((lon + k * 1.6, lat - k * 1.1,
+                     REGIONS[s[7]][1], num))
+    draw_map(c, MX, 916, CW, 28, pins)
+    c.rect(MX + 4, 919, 214, 12, PAPER)
+    c.text(MX + 8, 928, "WHERE IT HAPPENED · NUMBERS = STORIES",
            SANSB, SANSB_EM, SANSB_ASC, 7.0, NAVY, 0.3)
 
-    draw_also(c, 775, 134)
-    draw_timeline(c, 913)
-    draw_datecheck(c, 951)
-    draw_footer(c, 1010)
+    draw_datecheck(c, 948)
+    draw_footer(c, 1008)
     return c
 
 

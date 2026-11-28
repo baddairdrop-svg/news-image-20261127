@@ -1,4 +1,4 @@
-# Story data for news-image-20261127 — FOCUSED REBUILD (36 stories).
+# Story data for news-image-20261127 — FOCUSED REBUILD (28 stories).
 #
 # Selection: the strongest stories from the FINAL verified pool
 # for Friday 27 November 2026 (102 unique verified stories in
@@ -18,8 +18,10 @@
 # "day in numbers" panel, numbered ALSO list, numbered-pin
 # map, honest DATE CHECK) — with 100% own code, art and text,
 # and stories ONLY from our verified database. It cuts the
-# submitted 58-story entry to 36 stronger stories: 3 heroes +
-# 12 grid cards + 21 ALSO lines. A new submission would
+# submitted 58-story entry to 28 stronger stories: 3 heroes +
+# 12 grid cards + 13 ALSO lines (Bedill's adjustment
+# 2026-11-28 17:19 WIB: fewer than 30 is fine as long as every
+# story is strong — quality over quantity). A new submission would
 # permanently replace the counted 58-story entry, so this
 # rebuild stops at SIAP SUBMIT until Bedill orders otherwise.
 #
@@ -122,18 +124,12 @@ STORIES = [
     ("also", "", "ANKARA", "DIPLOMACY",
      "Erdoğan completes Turkey's ratification of Mecca pact",
      "", "REUTERS", 5, "Diplomacy", "OFFICIAL", "", (32.9, 39.9)),
-    ("also", "", "SEOUL", "DIPLOMACY",
-     "South Korea repatriates 6 North Koreans; one stays",
-     "", "REUTERS", 9, "Diplomacy", "REPORTED", "", (127.0, 37.5)),
     ("also", "", "HANOI", "TRADE",
      "CPTPP opens accession talks with UAE, Indonesia, Philippines",
      "", "REUTERS", 8, "Trade", "REPORTED", "", (105.8, 21.0)),
     ("also", "", "PARIS", "ECONOMY",
      "France CPI 2.9% in November; Q3 GDP revised to −0.2%",
      "", "INSEE", 3, "Economy", "OFFICIAL", "", (2.35, 48.9)),
-    ("also", "", "BERLIN", "ECONOMY",
-     "Germany jobless +9k to 3.025m; rate steady at 6.4%",
-     "", "BA", 3, "Economy", "OFFICIAL", "", (13.4, 52.5)),
     ("also", "", "WARSAW", "TECH",
      "Poland signs ~$300m Palantir defence deal, 5 years",
      "", "REUTERS", 4, "Tech", "REPORTED", "", (21.0, 52.2)),
@@ -149,9 +145,6 @@ STORIES = [
     ("also", "", "BEIJING", "ECONOMY",
      "China industrial profits +20.1% in October (NBS, Friday)",
      "", "NBS", 9, "Economy", "OFFICIAL", "", (116.4, 39.9)),
-    ("also", "", "PITTSBURGH", "SPORT",
-     "Steelers beat Broncos 27–5 in Friday night game",
-     "", "REUTERS", 0, "Sport", "REPORTED", "", (-80.0, 40.4)),
     ("also", "", "BRASÍLIA", "POLITICS",
      "Lula taps Trabuco; confirmed Friday as markets rally",
      "", "REUTERS", 1, "Politics", "REPORTED", "", (-47.9, -15.8)),
@@ -159,26 +152,9 @@ STORIES = [
      "Top court largely upholds Quebec Bill 21 (2026 SCC 41)",
      "", "SUPREME COURT OF CANADA", 0, "Law", "OFFICIAL", "",
      (-75.7, 45.4)),
-    ("also", "", "ISLAMABAD", "DEFENCE",
-     "Pakistan hosts Makkah Defence Alliance talks, 27–28 Nov",
-     "", "GNP", 7, "Defence", "REPORTED", "", (73.1, 33.7)),
-    ("also", "", "BEIJING", "LAW",
-     "Ex-Guangxi chief Lan Tianli gets suspended death sentence",
-     "", "REUTERS · XINHUA", 9, "Law", "REPORTED", "",
-     (116.4, 39.9)),
-    ("also", "", "SPACE", "SPACE",
-     "Asteroid 2026 WU1 passed safely, 12.5 lunar distances away",
-     "", "ESA NEO", 12, "Space", "OFFICIAL", "", None),
     ("also", "", "WORLD", "TECH",
      "DeepSeek tests per-turn cost display, first reported Friday",
      "", "REUTERS", 11, "Tech", "REPORTED", "", None),
-    ("also", "", "FUJIAN", "DEFENCE",
-     "China landing drill with floating bridge still under way",
-     "", "REUTERS", 9, "Defence", "REPORTED", "", (119.3, 26.1)),
-    ("also", "", "LONDON", "BUSINESS",
-     "European CEO sentiment at two-year high (47 vs 40)",
-     "", "REUTERS SURVEY", 2, "Business", "REPORTED", "",
-     (-0.12, 51.5)),
 ]
 
 # The day in numbers — verified closing figures for Friday

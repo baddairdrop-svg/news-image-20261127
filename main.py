@@ -1245,8 +1245,8 @@ def _validate():
     grid = stories_of("grid")
     assert len(heroes) == 3, "need exactly 3 heroes"
     assert len(grid) == 12, "need exactly 12 grid cards"
-    assert len(stories_of("also")) == 21, "need exactly 21 ALSO lines"
-    assert len(STORIES) == 36, "need exactly 36 stories"
+    assert len(stories_of("also")) == 13, "need exactly 13 ALSO lines"
+    assert len(STORIES) == 28, "need exactly 28 stories"
     for s in heroes + grid:
         assert s[1] in SCENES, "unknown art: %s" % s[1]
     for s in STORIES:
@@ -1265,17 +1265,17 @@ def build():
     heroes = stories_of("hero")
     hw = (CW - 20) / 3
     for i, s in enumerate(heroes):
-        draw_hero(c, MX + i * (hw + 10), 246, hw, 196, i + 1, s)
+        draw_hero(c, MX + i * (hw + 10), 246, hw, 200, i + 1, s)
 
     grid = stories_of("grid")
     gw = (CW - 30) / 4
     for i, s in enumerate(grid):
         gx = MX + (i % 4) * (gw + 10)
-        gy = 448 + (i // 4) * 100
-        draw_grid_card(c, gx, gy, gw, 96, i + 4, s)
+        gy = 452 + (i // 4) * 104
+        draw_grid_card(c, gx, gy, gw, 100, i + 4, s)
 
-    draw_numbers(c, 754)            # ends 806
-    draw_also(c, 812, 100)          # numbered 16..36
+    draw_numbers(c, 766)            # ends 818
+    draw_also(c, 824, 78)           # numbered 16..28
 
     # numbered map pins for every story that has a place;
     # duplicate coordinates nudge apart so numbers stay readable
@@ -1289,13 +1289,13 @@ def build():
         seen[(lon, lat)] = k + 1
         pins.append((lon + k * 1.6, lat - k * 1.1,
                      REGIONS[s[7]][1], num))
-    draw_map(c, MX, 916, CW, 28, pins)
-    c.rect(MX + 4, 919, 214, 12, PAPER)
-    c.text(MX + 8, 928, "WHERE IT HAPPENED · NUMBERS = STORIES",
+    draw_map(c, MX, 906, CW, 30, pins)
+    c.rect(MX + 4, 909, 214, 12, PAPER)
+    c.text(MX + 8, 918, "WHERE IT HAPPENED · NUMBERS = STORIES",
            SANSB, SANSB_EM, SANSB_ASC, 7.0, NAVY, 0.3)
 
-    draw_datecheck(c, 948)
-    draw_footer(c, 1008)
+    draw_datecheck(c, 942)
+    draw_footer(c, 1002)
     return c
 
 

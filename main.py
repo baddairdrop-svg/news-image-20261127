@@ -996,6 +996,23 @@ def draw_chip(c, x, y, text):
            (250, 246, 230), 0.3)
 
 
+def draw_chip_right(c, right, y, text):
+    """Stat chip in the card's text area, right-aligned at y (top).
+
+    Kept off the artwork: it sits on the kicker row, clear of the
+    scene above and the headline below.
+    """
+    if not text:
+        return
+    size = 7.6
+    tw = text_width(text, SANSB, SANSB_EM, size, 0.3)
+    bw = tw + 9
+    bh = 12
+    c.rect(right - bw, y, bw, bh, INK)
+    c.text(right - bw + 4.5, y + bh - 3.4, text, SANSB, SANSB_EM,
+           SANSB_ASC, size, (250, 246, 230), 0.3)
+
+
 def draw_top(c):
     c.hline(MX, 20, CW, INK, 2)
     c.text(MX, 36, "FRIDAY 27 NOVEMBER 2026 · ALL TIMES UTC",
@@ -1091,10 +1108,10 @@ def draw_grid_card(c, x, y, w, h, num, s):
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
     c.hline(x + 1, y + 1 + sh, w - 2, rcol, 2)
-    draw_chip(c, x + 5, y + 5, chip)
     ty = y + sh + 11
     c.text(x + 7, ty, "%s · %s · %s" % (REGION_SHORT[region], place, cat),
-           SANSB, SANSB_EM, SANSB_ASC, 7.8, rcol, 0.3)
+           SANSB, SANSB_EM, SANSB_ASC, 7.4, rcol, 0.3)
+    draw_chip_right(c, x + w - 7, ty - 9.5, chip)
     ty = c.para(x + 7, ty + 10, head, SANSB, SANSB_EM, SANSB_ASC, 10.8,
                 INK, w - 14, leading=10.8)
     ty = c.para(x + 7, ty + 0.5, summ, SANS, SANS_EM, SANS_ASC, 8.2,

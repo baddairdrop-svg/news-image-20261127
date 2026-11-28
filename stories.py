@@ -106,7 +106,7 @@ STORIES = [
      "Session cancelled; €45bn loan slips to 17 Dec.",
      "EURONEWS · CONSILIUM", 3, "Diplomacy", "CONFIRMED",
      "TO 17 DEC", (4.4, 50.8)),
-    ("grid", "f1car", "LUSAIL, QATAR", "SPORT",
+    ("grid", "f1car", "LUSAIL", "SPORT",
      "Antonelli fastest in both Qatar sessions",
      "FP1 1:23.217, FP2 1:23.077; Russell P2 both.",
      "PIRELLI · CRASH.NET", 5, "Sport", "CONFIRMED", "FP1 + FP2",

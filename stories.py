@@ -1,24 +1,27 @@
-# Story data for news-image-20261127.
+# Story data for news-image-20261127 — REBUILD (58 stories).
 #
-# Selection: the strongest stories from the verified pool for
-# Friday 27 November 2026 (every story happened or was first
-# reported that day in some time zone, verified against its named
-# source in the research database before any design began).
+# Selection: the strongest stories from the FINAL verified pool
+# for Friday 27 November 2026 (102 unique verified stories in
+# the research database after the Saturday closing sweep; every
+# story happened or was first reported that day in some time
+# zone, verified against its named source before any design).
 # No story outside that pool is used. Items that only LOOK like
-# 27 November news are listed in DATECHECK with their real dates.
-# All times UTC. Local dates are named where they differ.
+# 27 November news are listed in DATECHECK with their real
+# dates. All times UTC. Local dates are named where they differ.
+# Intraday market snapshots use closing numbers where the
+# closing sweep superseded them (oil, gold, crypto, indices).
 #
-# Flexible slots: this file is the single edit point for the
-# Saturday closing sweep — evening stories (F1 Qatar, Wall Street
-# close, Friday-night sport, CPI prints) swap into grid/also
-# slots here and the page re-renders with no code change.
+# This rebuild (Bedill's order 2026-11-28) expands the
+# submitted 42-story entry to 58 stories: 3 heroes + 16 grid
+# cards + 39 ALSO lines. The submitted entry stays the counted
+# entry until Bedill orders a replacement.
 #
-# Regions are split finely (13 slots; 12 carry stories today):
+# Regions are split finely (13 slots; all 13 carry stories in
+# this rebuild — South America filled from the closing pool):
 # 0 North America, 1 South America, 2 North Europe,
 # 3 West Europe, 4 East Europe, 5 Middle East, 6 Africa,
 # 7 South Asia, 8 Southeast Asia, 9 East Asia, 10 Oceania,
-# 11 Global, 12 Space. South America honestly has no verified
-# Friday story yet; the closing sweep may fill it.
+# 11 Global, 12 Space.
 #
 # Story tuple: (kind, art, place, category, headline, summary,
 #               source, region, field, confidence, chip, pin)
@@ -39,15 +42,14 @@ STORIES = [
      "00:15 UTC", (177.9, -39.3)),
     ("hero", "jets", "TAIPEI", "DEFENCE",
      "Taiwan votes as Chinese jets circle",
-     "Final campaign day in Taiwan; 26 Chinese military "
-     "aircraft were tracked around the island Friday.",
-     "REUTERS · MND", 9, "Defence", "REPORTED", "26 AIRCRAFT",
+     "Final campaign day in Taiwan; 30 Chinese military "
+     "aircraft tracked, 26 crossed the median line.",
+     "REUTERS · MND", 9, "Defence", "REPORTED", "30 AIRCRAFT",
      (121.6, 25.0)),
 
     ("grid", "prices", "TOKYO", "ECONOMY",
      "Tokyo inflation hits 16-month high",
-     "Core prices +2.9% in November; a Bank of Japan "
-     "rate rise is now expected.",
+     "Core prices +2.9% in November.",
      "REUTERS", 9, "Economy", "REPORTED", "+2.9%", (139.7, 35.7)),
     ("grid", "tanker", "CANBERRA", "ENERGY",
      "Australia reserves 20% of LNG for home",
@@ -61,8 +63,7 @@ STORIES = [
      (100.5, 13.8)),
     ("grid", "court", "MANILA", "LAW",
      "Duterte trial opens Monday at ICC",
-     "Victims' families travelled to The Hague; the "
-     "former president's trial starts 30 Nov.",
+     "Former president's trial starts 30 Nov.",
      "REUTERS", 8, "Law", "REPORTED", "MON 30 NOV",
      (121.0, 14.6)),
     ("grid", "fence", "SEOUL", "DEFENCE",
@@ -72,49 +73,66 @@ STORIES = [
      (127.0, 37.5)),
     ("grid", "tube", "LONDON", "LABOUR",
      "Tube strike shuts two lines till midday",
-     "RMT walkout; two lines shut until noon.",
-     "THE TIMES", 2, "Labour", "REPORTED", "TILL 12:00",
+     "Ended 11:59; recovery expected by 18:00.",
+     "THE TIMES · TFL", 2, "Labour", "REPORTED", "TILL 12:00",
      (-0.12, 51.5)),
     ("grid", "car", "LONDON", "INDUSTRY",
      "UK car output jumps 4.8%",
-     "Factories built 64,141 vehicles in October, "
-     "SMMT said Friday; exports +14.2%.",
+     "64,141 vehicles built in October; exports +14.2%.",
      "REUTERS · SMMT", 2, "Industry", "OFFICIAL", "+4.8%",
      (-0.12, 51.5)),
     ("grid", "vote", "TOKYO", "POLITICS",
      "Censure of minister fails by 4 votes",
-     "Upper house rejected the motion against "
-     "Minister Seki by 124 votes to 120.",
+     "Upper house rejected the motion, 124 to 120.",
      "TBS", 9, "Politics", "REPORTED", "124–120",
      (139.7, 35.7)),
     ("grid", "ferry", "HONG KONG", "TRANSPORT",
      "Ferry hits dock, 24 injured",
-     "A ferry struck a pier off Tsing Yi at "
-     "01:21 UTC; 24 passengers hurt.",
+     "Ferry struck a pier off Tsing Yi at 01:21 UTC.",
      "XINHUA", 9, "Transport", "REPORTED", "24 INJURED",
      (114.1, 22.3)),
     ("grid", "flags", "NEW DELHI", "DIPLOMACY",
      "India hosts Indian Ocean summit",
-     "The 25th IORA Council of Ministers met in New Delhi "
-     "on Friday.",
+     "25th IORA Council adopted the Delhi Communiqué.",
      "IANS", 7, "Diplomacy", "REPORTED", "25TH IORA",
      (77.2, 28.6)),
     ("grid", "shoppers", "NEW YORK", "ECONOMY",
      "Black Friday opens $1tn season",
-     "Shoppers queued at dawn; holiday sales are "
-     "forecast above $1 trillion.",
-     "REUTERS · AP", 0, "Economy", "REPORTED", "FORECAST",
+     "Footfall −2% midday; $12.9bn online forecast.",
+     "REUTERS · PASSBY", 0, "Economy", "REPORTED", "FORECAST",
      (-74.0, 40.7)),
     ("grid", "stars", "BRUSSELS", "DIPLOMACY",
      "EU leaders scrap Friday session",
-     "Friday's session was cancelled; the €45bn "
-     "Ukraine loan slips to 17 Dec.",
+     "Session cancelled; €45bn loan slips to 17 Dec.",
      "EURONEWS · CONSILIUM", 3, "Diplomacy", "CONFIRMED",
      "TO 17 DEC", (4.4, 50.8)),
+    ("grid", "f1car", "LUSAIL, QATAR", "SPORT",
+     "Antonelli fastest in both Qatar sessions",
+     "FP1 1:23.217, FP2 1:23.077; Russell P2 both.",
+     "PIRELLI · CRASH.NET", 5, "Sport", "CONFIRMED", "FP1 + FP2",
+     (51.5, 25.5)),
+    ("grid", "chart", "NEW YORK", "MARKETS",
+     "Wall Street rallies in half-day session",
+     "Dow 50,780.64 (+1.19%); Nasdaq +2.31%.",
+     "REUTERS", 0, "Markets", "REPORTED", "DOW 50,781",
+     (-74.0, 40.7)),
+    ("grid", "court", "OTTAWA", "LAW",
+     "Top court largely upholds Quebec Bill 21",
+     "Ruled Friday: s.33 valid, s.8 partly not.",
+     "SUPREME COURT OF CANADA", 0, "Law", "OFFICIAL", "2026 SCC 41",
+     (-75.7, 45.4)),
+    ("grid", "prices", "MADRID", "ECONOMY",
+     "Spain inflation 4.1% in flash reading",
+     "CPI 4.1% year on year; core 2.6%, INE said Friday.",
+     "INE", 3, "Economy", "OFFICIAL", "4.1%", (-3.7, 40.4)),
 
     ("also", "", "CHRISTCHURCH", "SPORT",
      "NZ 246/5 at stumps, Day 1 of 2nd Test v India",
      "", "REUTERS", 10, "Sport", "REPORTED", "", (172.6, -43.5)),
+    ("also", "", "MELBOURNE", "SPORT",
+     "Australia 84–67 Iran: qualify for 2027 World Cup, 9–0",
+     "", "FIBA · BASKETBALL AUS", 10, "Sport", "CONFIRMED", "",
+     (145.0, -37.8)),
     ("also", "", "TOKYO", "TECH",
      "JERA in talks with Anthropic and Meta on data centres",
      "", "NIKKEI VIA REUTERS", 9, "Tech", "CLAIM", "",
@@ -126,9 +144,8 @@ STORIES = [
      "Erdoğan completes Turkey's ratification of Mecca pact",
      "", "REUTERS", 5, "Diplomacy", "OFFICIAL", "", (32.9, 39.9)),
     ("also", "", "NEW DELHI", "POLITICS",
-     "India Parliament to reconvene 30 Nov; Cabinet met Friday",
-     "", "DAILY JAGRAN", 7, "Politics", "REPORTED", "",
-     (77.2, 28.6)),
+     "India Cabinet approves delimitation, women's-quota bill",
+     "", "REUTERS", 7, "Politics", "REPORTED", "", (77.2, 28.6)),
     ("also", "", "MANILA", "POLITICS",
      "Sara Duterte: resignation “out of the question”",
      "", "REUTERS", 8, "Politics", "REPORTED", "", (121.0, 14.6)),
@@ -148,6 +165,13 @@ STORIES = [
     ("also", "", "KUALA LUMPUR", "CRIME",
      "6 charged over 96.2 kg meth haul at Subang",
      "", "SCOOP", 8, "Crime", "REPORTED", "", (101.7, 3.1)),
+    ("also", "", "HANOI", "TRADE",
+     "CPTPP opens accession talks with UAE, Indonesia, Philippines",
+     "", "REUTERS", 8, "Trade", "REPORTED", "", (105.8, 21.0)),
+    ("also", "", "BEIJING", "LAW",
+     "Ex-Guangxi chief Lan Tianli gets suspended death sentence",
+     "", "REUTERS · XINHUA", 9, "Law", "REPORTED", "",
+     (116.4, 39.9)),
     ("also", "", "LONDON", "BUSINESS",
      "European CEO sentiment at two-year high (47 vs 40)",
      "", "REUTERS SURVEY", 2, "Business", "REPORTED", "",
@@ -156,16 +180,37 @@ STORIES = [
      "Spain's final campaign day; vote on Sunday 29 Nov",
      "", "EFE VIA REUTERS", 3, "Politics", "REPORTED", "",
      (-3.7, 40.4)),
+    ("also", "", "PARIS", "ECONOMY",
+     "France CPI 2.9% in November; Q3 GDP revised to −0.2%",
+     "", "INSEE", 3, "Economy", "OFFICIAL", "", (2.35, 48.9)),
+    ("also", "", "BERLIN", "ECONOMY",
+     "Germany jobless +9k to 3.025m; rate steady at 6.4%",
+     "", "BA", 3, "Economy", "OFFICIAL", "", (13.4, 52.5)),
     ("also", "", "WARSAW", "POLITICS",
      "Poland's conservatives face KKP dilemma (analysis)",
      "", "REUTERS", 4, "Politics", "REPORTED", "", (21.0, 52.2)),
+    ("also", "", "WARSAW", "TECH",
+     "Poland signs ~$300m Palantir defence deal, 5 years",
+     "", "REUTERS", 4, "Tech", "REPORTED", "", (21.0, 52.2)),
     ("also", "", "NAIROBI", "POLITICS",
      "Senator Sifuna calls President Ruto an “existential threat”",
      "", "PEOPLE DAILY", 6, "Politics", "REPORTED", "",
      (36.8, -1.3)),
+    ("also", "", "JOHANNESBURG", "HEALTH",
+     "Constitutional Court dismisses both NHI challenges",
+     "", "BUSINESSDAY", 6, "Health", "REPORTED", "", (28.0, -26.2)),
+    ("also", "", "GAZA", "CONFLICT",
+     "Friday strikes kill 5, hospitals say; IDF targeted militants",
+     "", "AP", 5, "Conflict", "REPORTED", "", (34.4, 31.5)),
+    ("also", "", "TAIZ", "CONFLICT",
+     "Strike kills 11 incl. children; perpetrator contested",
+     "", "AP", 5, "Conflict", "CLAIM", "", (44.0, 13.6)),
     ("also", "", "SPACE", "SPACE",
      "Asteroid 2026 WU1 passed safely, 12.5 lunar distances away",
      "", "ESA NEO", 12, "Space", "OFFICIAL", "", None),
+    ("also", "", "TAIYUAN", "SPACE",
+     "Long March 6A launches Yaogan-50 04 successfully",
+     "", "XINHUA", 12, "Space", "OFFICIAL", "", (112.5, 37.9)),
     ("also", "", "GENEVA", "RIGHTS",
      "UN Minority Forum held its second day of panels",
      "", "OHCHR", 11, "Rights", "OFFICIAL", "", (6.1, 46.2)),
@@ -173,16 +218,16 @@ STORIES = [
      "First International Day to Eliminate Child Marriage observed",
      "", "UN · PLAN", 11, "Rights", "OFFICIAL", "", None),
     ("also", "", "WORLD", "MARKETS",
-     "Stocks rose: Nikkei +2.1%, China +3.8%, Nasdaq fut. +2.4%",
+     "Europe close: Stoxx 600 +1.1%, DAX +0.9%, FTSE +0.84%",
      "", "REUTERS", 11, "Markets", "REPORTED", "", None),
     ("also", "", "SINGAPORE", "ENERGY",
-     "Oil near November highs; first weekly gain in four",
+     "Brent settles $95.44, first weekly gain in November",
      "", "REUTERS", 11, "Energy", "REPORTED", "", (103.8, 1.35)),
     ("also", "", "WORLD", "MARKETS",
-     "Bitcoin ~$61.5k as $7bn of options expired Friday",
+     "Bitcoin fades to $59,861 at 18:00 UTC as options expire",
      "", "COINDESK", 11, "Markets", "REPORTED", "", None),
     ("also", "", "WORLD", "MARKETS",
-     "Gold $3,650 (+2.3%) and silver $44.07 (+6.2%) rebounded",
+     "Gold $3,653 (+2.5%) and silver $43.73 (+5.3%) rebound",
      "", "REUTERS", 11, "Markets", "REPORTED", "", None),
     ("also", "", "BEIJING", "ECONOMY",
      "China industrial profits +20.1% in October (NBS, Friday)",
@@ -191,7 +236,7 @@ STORIES = [
      "Thailand issued heavy-rain advisory for 27–30 Nov",
      "", "TMD", 8, "Weather", "REPORTED", "", (100.5, 13.8)),
     ("also", "", "WORLD", "TECH",
-     "AI briefing: DeepSeek and Mistral updates reported Friday",
+     "DeepSeek tests per-turn cost display, first reported Friday",
      "", "REUTERS", 11, "Tech", "REPORTED", "", None),
     ("also", "", "LONDON", "MARKETS",
      "Europe futures +0.7%; SAP and tobacco results in focus",
@@ -200,18 +245,24 @@ STORIES = [
      "Friday journals: cancer-cell, landslide and livestock papers",
      "", "SCIENTIFIC REPORTS", 11, "Science", "REPORTED", "",
      None),
+    ("also", "", "PITTSBURGH", "SPORT",
+     "Steelers beat Broncos 27–5 in Friday night game",
+     "", "REUTERS", 0, "Sport", "REPORTED", "", (-80.0, 40.4)),
+    ("also", "", "BRASÍLIA", "POLITICS",
+     "Lula taps Trabuco; confirmed Friday as markets rally",
+     "", "REUTERS", 1, "Politics", "REPORTED", "", (-47.9, -15.8)),
 ]
 
 # The day in UTC — anchor moments shown on the timeline strip.
 TIMELINE = [
-    ("00:06", "UK car data"),
     ("00:15", "Electron launch"),
     ("01:21", "HK ferry crash"),
-    ("02:59", "India Cabinet call"),
-    ("04:32", "Asteroid passes"),
     ("06:19", "IORA opens"),
     ("07:00", "NZ count final"),
     ("12:00", "Tube strike ends"),
+    ("13:05", "Long March 6A"),
+    ("17:00", "F1 FP2 Qatar"),
+    ("18:00", "Wall St close"),
 ]
 
 # Stories that look like 27 November news but are not, with
@@ -225,6 +276,4 @@ DATECHECK = [
     "Cairo tanker fire kills 31 — Wed 25 Nov",
     "Thanksgiving storm, ~961k without power — 25–26 Nov",
     "Zaporizhzhia loses offsite power (28th) — 25 Nov",
-    "Guinea-Bissau vote moved to 2028 — Thu 26 Nov",
-    "DRC Ebola passes 12,000 cases — Thu 26 Nov data",
 ]

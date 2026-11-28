@@ -842,12 +842,61 @@ def scene_stars(c, x, y, w, h, rcol):
     _tree(c, x + w * 0.93, gy + h * 0.14, h * 0.3)
 
 
+def scene_f1car(c, x, y, w, h, rcol):
+    gy = _grid_base(c, x, y, w, h, rcol)
+    c.rect(x, gy, w, h * 0.26, (92, 90, 96))
+    c.hline(x, gy + h * 0.1, w, (240, 236, 214), 1)
+    # speed lines
+    for i in range(3):
+        c.hline(x + w * 0.04, gy - h * (0.16 + i * 0.12), w * 0.2,
+                (214, 210, 196), 1)
+    # F1 car: low nose, halo, rear wing, big wheels
+    cx = x + w * 0.3
+    cy = gy + h * 0.08
+    cw2 = w * 0.62
+    c.polygon([(cx, cy), (cx + cw2 * 0.3, cy - h * 0.1),
+               (cx + cw2 * 0.55, cy - h * 0.14), (cx + cw2 * 0.8, cy - h * 0.16),
+               (cx + cw2 * 0.92, cy - h * 0.3), (cx + cw2, cy - h * 0.3),
+               (cx + cw2 * 0.94, cy)], rcol)
+    c.rect(cx + cw2 * 0.86, cy - h * 0.42, cw2 * 0.13, h * 0.12, (30, 30, 36))
+    c.rect(cx + cw2 * 0.9, cy - h * 0.3, 3, h * 0.16, (30, 30, 36))
+    c.polygon([(cx + cw2 * 0.42, cy - h * 0.13), (cx + cw2 * 0.58, cy - h * 0.13),
+               (cx + cw2 * 0.55, cy - h * 0.24), (cx + cw2 * 0.45, cy - h * 0.24)],
+              (30, 30, 36))
+    c.circle(cx + cw2 * 0.2, cy + 2, h * 0.1, (24, 24, 30))
+    c.circle(cx + cw2 * 0.8, cy + 2, h * 0.1, (24, 24, 30))
+    c.circle(cx + cw2 * 0.2, cy + 2, h * 0.045, (190, 190, 196))
+    c.circle(cx + cw2 * 0.8, cy + 2, h * 0.045, (190, 190, 196))
+
+
+def scene_chart(c, x, y, w, h, rcol):
+    gy = _grid_base(c, x, y, w, h, rcol)
+    c.rect(x, gy, w, h * 0.26, (170, 166, 156))
+    # rising bars
+    bx = x + w * 0.1
+    bw = w * 0.13
+    for i, bh in enumerate((0.18, 0.3, 0.42, 0.58)):
+        c.rect(bx + i * (bw + w * 0.05), gy - h * bh, bw, h * bh,
+               (128, 124, 118) if i < 3 else rcol)
+    # trend line with arrow head
+    pts = [(bx, gy - h * 0.22), (bx + (bw + w * 0.05), gy - h * 0.36),
+           (bx + 2 * (bw + w * 0.05), gy - h * 0.48),
+           (bx + 3 * (bw + w * 0.05) + bw * 0.6, gy - h * 0.66)]
+    for i in range(len(pts) - 1):
+        c.line(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1],
+               (178, 84, 52), 2)
+    ax, ay = pts[-1]
+    c.polygon([(ax, ay), (ax - w * 0.05, ay + h * 0.02),
+               (ax - w * 0.01, ay + h * 0.1)], (178, 84, 52))
+
+
 SCENES = {
     "ballot": scene_ballot, "rocket": scene_rocket, "jets": scene_jets,
     "prices": scene_prices, "tanker": scene_tanker, "fire": scene_fire,
     "court": scene_court, "fence": scene_fence, "tube": scene_tube,
     "car": scene_car, "vote": scene_vote, "ferry": scene_ferry,
     "flags": scene_flags, "shoppers": scene_shoppers, "stars": scene_stars,
+    "f1car": scene_f1car, "chart": scene_chart,
 }
 
 # ---------------------------------------------------------------- world map
@@ -1010,7 +1059,7 @@ def draw_hero(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 104
+    sh = 84
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1022,10 +1071,10 @@ def draw_hero(c, x, y, w, h, num, s):
     ty = y + sh + 16
     c.text(x + 9, ty, "%s · %s · %s" % (REGION_SHORT[region], place, cat),
            SANSB, SANSB_EM, SANSB_ASC, 9.6, rcol, 0.5)
-    ty = c.para(x + 9, ty + 18, head, SERIF, SERIF_EM, SERIF_ASC, 17,
-                INK, w - 18, leading=19)
+    ty = c.para(x + 9, ty + 17, head, SERIF, SERIF_EM, SERIF_ASC, 16,
+                INK, w - 18, leading=16.8)
     ty = c.para(x + 9, ty + 0.5, summ, SANS, SANS_EM, SANS_ASC, 9.8,
-                (52, 56, 68), w - 18, leading=12.4)
+                (52, 56, 68), w - 18, leading=11.0)
     by = y + h - 15
     c.text(x + 9, by + 8, src, SANSB, SANSB_EM, SANSB_ASC, 7.2, GREY, 0.3)
     draw_badge(c, x + w - 8, by - 2, conf)
@@ -1037,7 +1086,7 @@ def draw_grid_card(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 38
+    sh = 30
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1046,25 +1095,25 @@ def draw_grid_card(c, x, y, w, h, num, s):
     ty = y + sh + 11
     c.text(x + 7, ty, "%s · %s · %s" % (REGION_SHORT[region], place, cat),
            SANSB, SANSB_EM, SANSB_ASC, 7.8, rcol, 0.3)
-    ty = c.para(x + 7, ty + 11.5, head, SANSB, SANSB_EM, SANSB_ASC, 10.8,
-                INK, w - 14, leading=11.8)
+    ty = c.para(x + 7, ty + 10, head, SANSB, SANSB_EM, SANSB_ASC, 10.8,
+                INK, w - 14, leading=10.8)
     ty = c.para(x + 7, ty + 0.5, summ, SANS, SANS_EM, SANS_ASC, 8.2,
                 (60, 64, 76), w - 14, leading=9.8)
-    by = y + h - 12
+    by = y + h - 10
     c.text(x + 7, by + 7, src, SANSB, SANSB_EM, SANSB_ASC, 6.4, GREY, 0.2)
     draw_badge(c, x + w - 6, by - 2, conf)
 
 
 def draw_also(c, y, budget_h):
     items = stories_of("also")
-    c.text(MX, y + 10, "ALSO TODAY — MORE VERIFIED STORIES",
+    c.text(MX, y + 9, "ALSO TODAY — MORE VERIFIED STORIES",
            SANSB, SANSB_EM, SANSB_ASC, 10, NAVY, 0.5)
-    c.hline(MX, y + 14, CW, RULE, 1)
+    c.hline(MX, y + 13, CW, RULE, 1)
     cols = 3
     gap = 12
     colw = (CW - gap * (cols - 1)) / cols
-    size = 7.5
-    leading = 8.2
+    size = 7.3
+    leading = 7.6
     # measure each item (place prefix + wrapped headline), then
     # balance columns by measured height so no column overflows
     measured = []
@@ -1078,7 +1127,7 @@ def draw_also(c, y, budget_h):
         k = heights.index(min(heights))
         columns[k].append((s, lines))
         heights[k] += len(lines) * leading + 0.6
-    top = y + 25
+    top = y + 20
     for ci in range(cols):
         cx = MX + ci * (colw + gap)
         cy = top
@@ -1110,15 +1159,15 @@ def draw_also(c, y, budget_h):
 def draw_timeline(c, y):
     c.text(MX, y + 10, "THE DAY IN UTC", SANSB, SANSB_EM, SANSB_ASC, 9,
            NAVY, 0.5)
-    ly = y + 18
+    ly = y + 16
     c.hline(MX + 90, ly, CW - 90, RULE, 1)
     n = len(TIMELINE)
     step = (CW - 90) / n
     for i, (t, label) in enumerate(TIMELINE):
         cx = MX + 90 + step * i + step / 2
         c.circle(cx, ly, 2.6, GOLD)
-        c.text_center(cx, ly + 11, t, SANSB, SANSB_EM, SANSB_ASC, 8.2, INK)
-        c.text_center(cx, ly + 20, label, SANS, SANS_EM, SANS_ASC, 7.2, GREY)
+        c.text_center(cx, ly + 10, t, SANSB, SANSB_EM, SANSB_ASC, 8.2, INK)
+        c.text_center(cx, ly + 18, label, SANS, SANS_EM, SANS_ASC, 7.2, GREY)
 
 
 def draw_datecheck(c, y):
@@ -1129,25 +1178,25 @@ def draw_datecheck(c, y):
     colw = CW / cols
     per = (len(DATECHECK) + cols - 1) // cols
     size = 8.0
-    leading = 8.8
+    leading = 8.2
     for ci in range(cols):
         cx = MX + ci * colw
-        cy = y + 26
+        cy = y + 24
         for item in DATECHECK[ci * per:(ci + 1) * per]:
             c.text(cx, cy, "✗", SANSB, SANSB_EM, SANSB_ASC, size, RED)
             c.text(cx + 11, cy, item, SANS, SANS_EM, SANS_ASC, size,
                    (70, 66, 60))
             cy += leading
-    return y + 26 + per * leading
+    return y + 24 + per * leading
 
 
 def draw_footer(c, y):
     c.hline(MX, y, CW, INK, 1)
-    c.text_center(W / 2, y + 14,
+    c.text_center(W / 2, y + 11,
                   "Every story above happened or was first reported on "
                   "Friday 27 November 2026. Forecasts and claims are "
                   "labelled as such; nothing is invented.",
-                  SERIFR, SERIFR_EM, SERIFR_ASC, 9.5, (70, 66, 60))
+                  SERIFR, SERIFR_EM, SERIFR_ASC, 9, (70, 66, 60))
 
 
 # ---------------------------------------------------------------- build
@@ -1155,7 +1204,7 @@ def _validate():
     heroes = stories_of("hero")
     grid = stories_of("grid")
     assert len(heroes) == 3, "need exactly 3 heroes"
-    assert len(grid) == 12, "need exactly 12 grid cards"
+    assert len(grid) == 16, "need exactly 16 grid cards"
     for s in heroes + grid:
         assert s[1] in SCENES, "unknown art: %s" % s[1]
     for s in STORIES:
@@ -1173,25 +1222,25 @@ def build():
     heroes = stories_of("hero")
     hw = (CW - 20) / 3
     for i, s in enumerate(heroes):
-        draw_hero(c, MX + i * (hw + 10), 204, hw, 216, i + 1, s)
+        draw_hero(c, MX + i * (hw + 10), 204, hw, 180, i + 1, s)
 
     grid = stories_of("grid")
     gw = (CW - 30) / 4
     for i, s in enumerate(grid):
         gx = MX + (i % 4) * (gw + 10)
-        gy = 426 + (i // 4) * 108
-        draw_grid_card(c, gx, gy, gw, 104, i + 4, s)
+        gy = 388 + (i // 4) * 89
+        draw_grid_card(c, gx, gy, gw, 88, i + 4, s)
 
     pins = [(s[11][0], s[11][1], REGIONS[s[7]][1])
             for s in heroes + grid if s[11] is not None]
-    draw_map(c, MX, 752, CW, 42, pins)
-    c.rect(MX + 4, 755, 196, 12, PAPER)
-    c.text(MX + 8, 764, "WHERE IT HAPPENED · PINS = ILLUSTRATED STORIES",
+    draw_map(c, MX, 747, CW, 24, pins)
+    c.rect(MX + 4, 750, 196, 12, PAPER)
+    c.text(MX + 8, 759, "WHERE IT HAPPENED · PINS = ILLUSTRATED STORIES",
            SANSB, SANSB_EM, SANSB_ASC, 7.0, NAVY, 0.3)
 
-    draw_also(c, 798, 100)
-    draw_timeline(c, 902)
-    draw_datecheck(c, 938)
+    draw_also(c, 775, 134)
+    draw_timeline(c, 913)
+    draw_datecheck(c, 951)
     draw_footer(c, 1010)
     return c
 

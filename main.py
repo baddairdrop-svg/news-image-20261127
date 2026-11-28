@@ -1015,20 +1015,59 @@ def draw_chip_right(c, right, y, text):
            SANSB_ASC, size, (250, 246, 230), 0.3)
 
 
+def draw_numbers_panel(c, x, y, w, h):
+    """THE DAY IN NUMBERS: compact closing-figures panel."""
+    c.rect(x, y, w, h, CREAM)
+    c.frame(x, y, w, h, RULE, 1)
+    c.text(x + 8, y + 11, "THE DAY IN NUMBERS",
+           SANSB, SANSB_EM, SANSB_ASC, 8.0, NAVY, 0.4)
+    c.text_right(x + w - 8, y + 11, "CLOSING FIGURES",
+                 SANSB, SANSB_EM, SANSB_ASC, 6.2, GREY, 0.3)
+    c.hline(x + 8, y + 15, w - 16, RULE, 1)
+    cols = 3
+    qw = (w - 16) / cols
+    for i, (value, label) in enumerate(NUMBERS):
+        cx = x + 8 + qw * (i % cols) + qw / 2
+        ry = y + 15 + (i // cols) * 19
+        c.text_center(cx, ry + 12, value, SERIF, SERIF_EM, SERIF_ASC,
+                      11.5, NAVY)
+        c.text_center(cx, ry + 19, label, SANSB, SANSB_EM, SANSB_ASC,
+                      5.8, GREY, 0.2)
+
+
 def draw_top(c):
     c.hline(MX, 20, CW, INK, 2)
     c.text(MX, 36, "FRIDAY 27 NOVEMBER 2026 · ALL TIMES UTC",
            SANSB, SANSB_EM, SANSB_ASC, 8.5, INK, 0.6)
     c.text_right(MX + CW, 36, "ONE DAY · ONE PAGE · @BADD-AIRDROP2",
                  SANSB, SANSB_EM, SANSB_ASC, 8.5, GREY, 0.6)
-    c.text_center(W / 2, 92, "THE WORLD IN ONE DAY",
-                  SERIF, SERIF_EM, SERIF_ASC, 47, INK, 1.0)
-    c.text_center(W / 2, 112,
-                  "Friday 27 November 2026 — the day's world news, "
-                  "drawn only from verified reports",
-                  SERIFR, SERIFR_EM, SERIFR_ASC, 12.5, NAVY)
-    c.hline(MX, 120, CW, INK, 2)
-    c.hline(MX, 124, CW, INK, 1)
+    # big masthead title + date, left
+    c.text(MX, 84, "THE WORLD IN ONE DAY",
+           SERIF, SERIF_EM, SERIF_ASC, 43, INK, 0.8)
+    c.text(MX, 104,
+           "Friday 27 November 2026 — the day's world news, "
+           "drawn only from verified reports",
+           SERIFR, SERIFR_EM, SERIFR_ASC, 12, NAVY)
+    # story/region counts, top right
+    counts = region_counts()
+    present = sum(1 for n in counts if n > 0)
+    rx = MX + 668
+    c.vline(rx - 14, 46, 112, RULE, 1)
+    c.text(rx, 76, str(len(STORIES)), SERIF, SERIF_EM, SERIF_ASC,
+           30, NAVY)
+    c.text(rx, 89, "STORIES, ALL VERIFIED",
+           SANSB, SANSB_EM, SANSB_ASC, 7.0, GREY, 0.4)
+    c.text(rx + 150, 76, str(present), SERIF, SERIF_EM, SERIF_ASC,
+           30, NAVY)
+    c.text(rx + 150, 89, "REGIONS OF THE WORLD",
+           SANSB, SANSB_EM, SANSB_ASC, 7.0, GREY, 0.4)
+    c.text(rx, 101, "%d NAMED SOURCES · %d FIELDS OF NEWS"
+           % (source_count(), field_count()),
+           SANSB, SANSB_EM, SANSB_ASC, 7.0, GREY, 0.4)
+    # closing-figures panel, top right under the counts
+    draw_numbers_panel(c, rx, 106, CW - 668, 54)
+    c.hline(MX, 164, CW, INK, 2)
+    c.hline(MX, 168, CW, INK, 1)
 
 
 def draw_stats(c, y):
@@ -1078,7 +1117,7 @@ def draw_hero(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 96
+    sh = 104
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
@@ -1105,11 +1144,14 @@ def draw_grid_card(c, x, y, w, h, num, s):
     rcol = REGIONS[region][1]
     c.rect(x, y, w, h, CREAM)
     c.frame(x, y, w, h, RULE, 1)
-    sh = 38
+    sh = 44
     c.set_clip(x + 1, y + 1, w - 2, sh)
     SCENES[art](c, x + 1, y + 1, w - 2, sh, rcol)
     c.clear_clip()
     c.hline(x + 1, y + 1 + sh, w - 2, rcol, 2)
+    c.circle(x + w - 12, y + 12, 8.5, INK)
+    c.text_center(x + w - 12, y + 15.5, str(num), SANSB, SANSB_EM,
+                  SANSB_ASC, 9, (250, 246, 230))
     ty = y + sh + 11
     c.text(x + 7, ty, "%s · %s · %s" % (REGION_SHORT[region], place, cat),
            SANSB, SANSB_EM, SANSB_ASC, 7.4, rcol, 0.3)
@@ -1177,25 +1219,6 @@ def draw_also(c, y, budget_h):
     return y + budget_h
 
 
-def draw_numbers(c, y):
-    """THE DAY IN NUMBERS: verified closing figures, six cells."""
-    c.text(MX, y + 10, "THE DAY IN NUMBERS — CLOSING FIGURES",
-           SANSB, SANSB_EM, SANSB_ASC, 10, NAVY, 0.5)
-    c.text_right(MX + CW, y + 10, "REUTERS · COINDESK",
-                 SANSB, SANSB_EM, SANSB_ASC, 7.2, GREY, 0.4)
-    c.hline(MX, y + 14, CW, RULE, 1)
-    qw = CW / len(NUMBERS)
-    for i, (value, label) in enumerate(NUMBERS):
-        cx = MX + qw * i + qw / 2
-        c.text_center(cx, y + 34, value, SERIF, SERIF_EM, SERIF_ASC,
-                      16, NAVY)
-        c.text_center(cx, y + 46, label, SANSB, SANSB_EM, SANSB_ASC,
-                      6.8, GREY, 0.3)
-        if i:
-            c.vline(MX + qw * i, y + 18, 30, RULE, 1)
-    return y + 52
-
-
 def draw_timeline(c, y):
     c.text(MX, y + 10, "THE DAY IN UTC", SANSB, SANSB_EM, SANSB_ASC, 9,
            NAVY, 0.5)
@@ -1257,25 +1280,23 @@ def _validate():
 def build():
     _validate()
     c = Canvas(W, H, PAPER)
-    draw_top(c)
-    y = draw_stats(c, 128)          # -> 166
-    y = draw_region_bar(c, 168)     # -> 204
-    draw_timeline(c, 206)           # UTC strip, ends ~240
+    draw_top(c)                     # masthead + counts + numbers panel
+    y = draw_region_bar(c, 172)     # region chips strip -> 208
+    draw_timeline(c, 212)           # UTC strip, ends ~246
 
     heroes = stories_of("hero")
     hw = (CW - 20) / 3
     for i, s in enumerate(heroes):
-        draw_hero(c, MX + i * (hw + 10), 246, hw, 200, i + 1, s)
+        draw_hero(c, MX + i * (hw + 10), 252, hw, 210, i + 1, s)
 
     grid = stories_of("grid")
     gw = (CW - 30) / 4
     for i, s in enumerate(grid):
         gx = MX + (i % 4) * (gw + 10)
-        gy = 452 + (i // 4) * 104
-        draw_grid_card(c, gx, gy, gw, 100, i + 4, s)
+        gy = 468 + (i // 4) * 108
+        draw_grid_card(c, gx, gy, gw, 104, i + 4, s)
 
-    draw_numbers(c, 766)            # ends 818
-    draw_also(c, 824, 78)           # numbered 16..28
+    draw_also(c, 798, 78)           # numbered 16..28
 
     # numbered map pins for every story that has a place;
     # duplicate coordinates nudge apart so numbers stay readable
@@ -1289,13 +1310,13 @@ def build():
         seen[(lon, lat)] = k + 1
         pins.append((lon + k * 1.6, lat - k * 1.1,
                      REGIONS[s[7]][1], num))
-    draw_map(c, MX, 906, CW, 30, pins)
-    c.rect(MX + 4, 909, 214, 12, PAPER)
-    c.text(MX + 8, 918, "WHERE IT HAPPENED · NUMBERS = STORIES",
+    draw_map(c, MX, 882, CW, 34, pins)
+    c.rect(MX + 4, 885, 214, 12, PAPER)
+    c.text(MX + 8, 894, "WHERE IT HAPPENED · NUMBERS = STORIES",
            SANSB, SANSB_EM, SANSB_ASC, 7.0, NAVY, 0.3)
 
-    draw_datecheck(c, 942)
-    draw_footer(c, 1002)
+    draw_datecheck(c, 922)
+    draw_footer(c, 982)
     return c
 
 

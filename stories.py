@@ -162,12 +162,12 @@ STORIES = [
 # CoinDesk at 18:00 UTC). Shown as figures, not counted as
 # stories.
 NUMBERS = [
-    ("50,780.64", "DOW JONES CLOSE · +1.19%"),
+    ("50,780.64", "DOW · +1.19%"),
     ("+2.31%", "NASDAQ CLOSE"),
-    ("$95.44", "BRENT CRUDE SETTLE"),
+    ("$95.44", "BRENT SETTLE"),
     ("$3,653", "GOLD · +2.5%"),
-    ("$59,861", "BITCOIN · 18:00 UTC"),
-    ("+1.1%", "STOXX 600 CLOSE"),
+    ("$59,861", "BTC · 18:00 UTC"),
+    ("+1.1%", "STOXX 600"),
 ]
 
 # The day in UTC — anchor moments shown on the timeline strip.

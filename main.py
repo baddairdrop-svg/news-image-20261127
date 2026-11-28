@@ -449,12 +449,35 @@ def _tree(c, cx, base, s):
     c.circle(cx - s * 0.3, base - s * 0.6, s * 0.32, LAND)
 
 
+def _shadow(c, cx, cy, w, col=(70, 76, 88)):
+    """Flattened ground shadow under a subject."""
+    c.rect(cx - w / 2, cy - 1.5, w, 3, col)
+    c.circle(cx - w / 2, cy, 1.5, col)
+    c.circle(cx + w / 2, cy, 1.5, col)
+
+
+def _glow(c, cx, cy, r, col=(252, 240, 190)):
+    """Soft light halo: concentric rings fading outward."""
+    c.ring(cx, cy, r, col, 1)
+    c.ring(cx, cy, r * 0.7, col, 1)
+
+
+def _fg_heads(c, x, y, w, h, col=(30, 34, 46)):
+    """Foreground crowd silhouettes along the bottom edge."""
+    for i, fx in enumerate((0.06, 0.2, 0.38, 0.58, 0.76, 0.92)):
+        s = h * (0.16 + (i % 3) * 0.03)
+        _person(c, x + w * fx, y + h + s * 0.4, s, col)
+
+
 def scene_ballot(c, x, y, w, h, rcol):
     _sky(c, x, y, w, h)
     _sun(c, x + w * 0.82, y + h * 0.22, h * 0.09)
     _cloud(c, x + w * 0.2, y + h * 0.16, h * 0.06)
     gy = y + h * 0.72
     c.rect(x, gy, w, h * 0.28, LAND)
+    # distant hills behind the parliament (background layer)
+    c.polygon([(x, gy), (x + w * 0.18, gy - h * 0.18), (x + w * 0.4, gy - h * 0.07),
+               (x + w * 0.58, gy - h * 0.14), (x + w * 0.7, gy)], (150, 176, 150))
     # parliament: dome + colonnade
     bx = x + w * 0.08
     bw = w * 0.52
@@ -520,6 +543,14 @@ def scene_ballot(c, x, y, w, h, rcol):
                SIL, 1)
         c.line(x + w * bx2, y + h * by2 - 2, x + w * bx2 + 3,
                y + h * by2, SIL, 1)
+    # depth layer: building shadow, lit windows, sun glow,
+    # foreground crowd silhouettes
+    _shadow(c, bx + bw / 2, gy + 2, bw * 0.95, (74, 104, 66))
+    _glow(c, x + w * 0.82, y + h * 0.22, h * 0.16)
+    for i in range(4):
+        c.rect(bx + 8 + i * (bw - 16) / 4, by + bh * 0.5, 3, bh * 0.14,
+               (252, 232, 160))
+    _fg_heads(c, x, y, w, h, (44, 58, 44))
 
 
 def scene_rocket(c, x, y, w, h, rcol):
@@ -576,6 +607,21 @@ def scene_rocket(c, x, y, w, h, rcol):
     for i in range(10):
         c.circle(x + (i * 97) % int(w), y + (i * 41) % int(h * 0.4), 1,
                  (240, 244, 252))
+    # depth layer: moon glow, rocket rim light, layered smoke
+    # shading, foreground dark headland silhouettes
+    _glow(c, x + w * 0.86, y + h * 0.16, h * 0.13, (220, 228, 245))
+    c.line(rx + rw, ry + rh * 0.25, rx + rw, ry + rh, (250, 220, 160), 1)
+    c.circle(rx + rw / 2, gy - h * 0.03, h * 0.09, (120, 122, 134))
+    c.circle(rx - w * 0.05, gy - h * 0.01, h * 0.07, (110, 112, 124))
+    c.circle(rx + w * 0.1, gy - h * 0.02, h * 0.08, (130, 132, 144))
+    c.polygon([(x, y + h), (x, y + h * 0.88), (x + w * 0.16, y + h * 0.94),
+               (x + w * 0.3, y + h)], (20, 26, 40))
+    c.polygon([(x + w, y + h), (x + w, y + h * 0.9),
+               (x + w * 0.86, y + h * 0.95), (x + w * 0.72, y + h)],
+              (20, 26, 40))
+    for i in range(5):
+        c.circle(x + w * (0.06 + i * 0.2), gy + h * 0.13, 1.4,
+                 (252, 232, 160))
 
 
 def scene_jets(c, x, y, w, h, rcol):
@@ -641,6 +687,22 @@ def scene_jets(c, x, y, w, h, rcol):
         c.line(mx2 - w * 0.07, ay, mx2 + w * 0.07, ay, RED, 2)
         c.polygon([(mx2 + w * 0.07, ay), (mx2 + w * 0.045, ay - 3),
                    (mx2 + w * 0.045, ay + 3)], RED)
+    # depth layer: sun glow, island shadow on the sea, jet
+    # shadows on the water, foreground wave crests
+    _glow(c, x + w * 0.08, y + h * 0.12, h * 0.11)
+    _shadow(c, cx + 4, y + h * 0.93, w * 0.13, (30, 84, 124))
+    for i in range(4):
+        a = 2 * math.pi * (i * 2 + 1) / 8 + 0.4
+        px = cx + rx * math.cos(a) + 3
+        py = cy + ry * math.sin(a) + h * 0.14
+        if py > sy:
+            _shadow(c, px, py, w * 0.05, (30, 84, 124))
+    for i in range(5):
+        wx = x + w * (0.08 + i * 0.2)
+        c.line(wx, y + h * 0.94, wx + w * 0.08, y + h * 0.92,
+               (200, 230, 248), 2)
+        c.line(wx + w * 0.02, y + h * 0.98, wx + w * 0.11, y + h * 0.96,
+               (170, 210, 238), 2)
 
 
 def _grid_base(c, x, y, w, h, rcol, dark=False, dusk=False):
@@ -699,6 +761,16 @@ def scene_prices(c, x, y, w, h, rcol):
                w * 0.045, h * bh3, (140, 230, 160))
     c.line(bx2 + w * 0.03, by2 + h * 0.18, bx2 + w * 0.27, by2 + h * 0.04,
            (250, 214, 110), 2)
+    # depth layer: crosswalk foreground, building shadow, lit
+    # skyline windows, tower beacon glow
+    for i in range(5):
+        c.rect(x + w * (0.06 + i * 0.19), gy + h * 0.14, w * 0.1, h * 0.05,
+               (240, 236, 220))
+    _shadow(c, x + w * 0.31, gy + 2, w * 0.5, (150, 138, 112))
+    for i in range(6):
+        c.rect(x + w * (0.6 + i * 0.065), gy - h * (0.2 + (i % 3) * 0.08),
+               2, 3, (252, 232, 160))
+    _glow(c, twx + w * 0.025, gy - h * 0.88, h * 0.06, (250, 200, 190))
 
 
 def scene_tanker(c, x, y, w, h, rcol):
@@ -745,6 +817,18 @@ def scene_tanker(c, x, y, w, h, rcol):
     c.line(x + w * 0.88, sy - h * 0.2, hx + hw * 0.6, hy - h * 0.1,
            (170, 176, 186), 2)
     c.circle(hx + hw * 0.35, hy - h * 0.2, h * 0.04, (250, 240, 200))
+    # depth layer: hull reflection, sun glints, foreground waves
+    c.polygon([(hx + hw * 0.08, hy + h * 0.2), (hx + hw * 0.92, hy + h * 0.2),
+               (hx + hw * 0.84, hy + h * 0.3), (hx + hw * 0.16, hy + h * 0.3)],
+              (30, 84, 124))
+    for i in range(5):
+        c.hline(x + w * (0.08 + i * 0.19), sy + h * (0.22 + (i % 2) * 0.08),
+                w * 0.07, (250, 236, 180), 1)
+    for i in range(4):
+        wx = x + w * (0.05 + i * 0.25)
+        c.line(wx, y + h * 0.95, wx + w * 0.1, y + h * 0.93,
+               (200, 230, 248), 2)
+    _glow(c, x + w * 0.84, y + h * 0.2, h * 0.12)
 
 
 def scene_fire(c, x, y, w, h, rcol):
@@ -799,6 +883,18 @@ def scene_fire(c, x, y, w, h, rcol):
                  (100, 102, 110))
         c.circle(x + w * (0.36 + i * 0.22), y + h * 0.06, h * 0.07,
                  (120, 122, 130))
+    # depth layer: foreground rubble silhouettes, ember glow,
+    # darker smoke shading, stall shadows
+    c.polygon([(x, y + h), (x, y + h * 0.9), (x + w * 0.14, y + h * 0.94),
+               (x + w * 0.24, y + h)], (40, 36, 34))
+    c.polygon([(x + w, y + h), (x + w, y + h * 0.92),
+               (x + w * 0.88, y + h * 0.96), (x + w * 0.78, y + h)],
+              (40, 36, 34))
+    for i in range(3):
+        _shadow(c, x + w * (0.18 + i * 0.3), gy + 2, w * 0.22, (52, 46, 42))
+        _glow(c, x + w * (0.18 + i * 0.3), gy - h * 0.36, h * 0.09,
+              (250, 190, 120))
+    c.circle(x + w * 0.5, y + h * 0.05, h * 0.08, (86, 88, 96))
 
 
 def scene_court(c, x, y, w, h, rcol):
@@ -844,6 +940,16 @@ def scene_court(c, x, y, w, h, rcol):
     c.rect(gx2 + w * 0.07, gy2 - h * 0.27, w * 0.09, h * 0.09, (90, 62, 36))
     c.rect(gx2 - w * 0.02, gy2 + h * 0.02, w * 0.12, h * 0.04, (90, 62, 36))
     c.circle(bx + bw / 2, by - h * 0.1, w * 0.03, GOLD)
+    # depth layer: column shadows, step shading, figure shadows
+    for i in range(5):
+        _shadow(c, bx + 4 + i * (bw - 8) / 5 + w * 0.022, gy - h * 0.04,
+                w * 0.05, (150, 142, 122))
+    for i in range(3):
+        c.hline(bx - 3 - i * 2, gy + h * (0.045 + i * 0.05), bw + 6 + i * 4,
+                (120, 114, 102), 1)
+    for i in range(3):
+        _shadow(c, bx + bw * (0.2 + i * 0.3), gy + h * 0.17, w * 0.05,
+                (150, 142, 122))
 
 
 def scene_fence(c, x, y, w, h, rcol):
@@ -916,6 +1022,12 @@ def scene_tube(c, x, y, w, h, rcol):
     # big foreground silhouettes of waiting passengers, left
     _person(c, x + w * 0.05, y + h * 0.98, h * 0.3, (24, 26, 34))
     _person(c, x + w * 0.13, y + h * 0.98, h * 0.26, (34, 36, 46))
+    # depth layer: headlight glow, platform edge light, arch shade
+    _glow(c, tx + tw * 0.18, ty + th * 0.78, th * 0.16, (252, 240, 190))
+    _glow(c, tx + tw * 0.82, ty + th * 0.78, th * 0.16, (252, 240, 190))
+    c.hline(x, ay + ah + h * 0.04, w * 0.2, (250, 220, 120), 1)
+    c.hline(x + w * 0.8, ay + ah + h * 0.04, w * 0.2, (250, 220, 120), 1)
+    c.ring(ax + aw / 2, ay + ah * 0.3, aw / 2 - 2, (52, 56, 72), 2)
 
 
 def scene_car(c, x, y, w, h, rcol):
@@ -1020,6 +1132,16 @@ def scene_ferry(c, x, y, w, h, rcol):
     c.circle(ix + w * 0.03, iy - h * 0.04, h * 0.05, (220, 240, 250))
     c.circle(ix + w * 0.05, iy + h * 0.02, h * 0.04, (200, 230, 246))
     c.line(px, sy - h * 0.3, px + w * 0.04, sy - h * 0.22, (60, 54, 46), 2)
+    # depth layer: ferry reflection, foreground waves, pier shadow
+    c.polygon([(fx + fw * 0.1, fy + h * 0.18), (fx + fw * 0.9, fy + h * 0.18),
+               (fx + fw * 0.8, fy + h * 0.28), (fx + fw * 0.2, fy + h * 0.28)],
+              (30, 84, 124))
+    _shadow(c, px + w * 0.11, sy + h * 0.3, w * 0.2, (30, 84, 124))
+    for i in range(4):
+        wx = x + w * (0.06 + i * 0.24)
+        c.line(wx, y + h * 0.94, wx + w * 0.09, y + h * 0.92,
+               (200, 230, 248), 2)
+    _glow(c, lx + w * 0.022, sy - h * 0.55, h * 0.07, (252, 240, 190))
 
 
 def scene_flags(c, x, y, w, h, rcol):
@@ -1056,6 +1178,12 @@ def scene_flags(c, x, y, w, h, rcol):
         c.rect(dx - w * 0.025, tby + h * 0.03, w * 0.05, h * 0.03, WHITE)
     c.rect(tbx + w * 0.34, tby - h * 0.12, w * 0.08, h * 0.05,
            (250, 232, 170))
+    # depth layer: table shadow, sea sparkles, building shade
+    _shadow(c, tbx + w * 0.38, tby + h * 0.12, w * 0.7, (150, 142, 122))
+    for i in range(6):
+        c.hline(x + w * (0.06 + i * 0.16), gy + h * 0.23, w * 0.05,
+                (200, 230, 248), 1)
+    c.rect(x + w * 0.3, gy - h * 0.46, w * 0.04, h * 0.46, (130, 124, 112))
 
 
 def scene_shoppers(c, x, y, w, h, rcol):
@@ -1099,6 +1227,14 @@ def scene_shoppers(c, x, y, w, h, rcol):
     for i in range(3):
         c.rect(x + w * (0.84 + i * 0.04), gy + h * (0.1 - i * 0.03),
                w * 0.045, h * 0.09, (240, 200, 90) if i % 2 else (120, 180, 220))
+    # depth layer: crowd shadows, window reflection streaks
+    for fx in (0.14, 0.3, 0.46, 0.62, 0.78, 0.9):
+        _shadow(c, x + w * fx, gy + h * 0.21, w * 0.06, (160, 150, 132))
+    for i in range(3):
+        c.line(sx + sw * (0.1 + i * 0.32), sy + h * 0.44,
+               sx + sw * (0.2 + i * 0.32), sy + h * 0.24,
+               (255, 246, 210), 2)
+    _shadow(c, sx + sw / 2, gy + 2, sw * 0.9, (160, 150, 132))
 
 
 def scene_stars(c, x, y, w, h, rcol):
@@ -1149,6 +1285,14 @@ def scene_stars(c, x, y, w, h, rcol):
         for i in range(7):
             c.circle(x + w * (0.3 + i * 0.06), gy + h * (0.08 + r * 0.06),
                      1.8, (90, 110, 170) if (i + r) % 2 else (200, 120, 90))
+    # depth layer: plaza shadow, warm window lights, spray dots
+    _shadow(c, bx + bw / 2, gy + 2, bw * 0.95, (150, 142, 122))
+    for i in range(5):
+        c.rect(bx + 6 + i * (bw - 12) / 5, by + h * 0.22, bw * 0.07,
+               h * 0.08, (252, 232, 160))
+    for i in range(6):
+        c.circle(x + w * (0.46 + i * 0.015), gy - h * (0.04 + (i % 3) * 0.03),
+                 1.2, (200, 230, 248))
 
 
 def scene_f1car(c, x, y, w, h, rcol):
@@ -1207,6 +1351,13 @@ def scene_f1car(c, x, y, w, h, rcol):
               (60, 90, 170))
     c.circle(cx2 + w * 0.06, cy2 + 1, h * 0.06, (24, 24, 30))
     c.circle(cx2 + w * 0.2, cy2 + 1, h * 0.06, (24, 24, 30))
+    # depth layer: car shadows, tire marks, sunset glow
+    _shadow(c, cx + cw2 / 2, cy + h * 0.13, cw2 * 0.9, (52, 52, 60))
+    _shadow(c, cx2 + w * 0.13, cy2 + h * 0.08, w * 0.24, (52, 52, 60))
+    for i in range(3):
+        c.line(x + w * (0.34 + i * 0.14), gy + h * 0.16,
+               x + w * (0.44 + i * 0.14), gy + h * 0.1, (40, 40, 48), 2)
+    _glow(c, x + w * 0.9, y + h * 0.3, h * 0.13, (252, 220, 160))
 
 
 def scene_chart(c, x, y, w, h, rcol):
@@ -1255,6 +1406,15 @@ def scene_chart(c, x, y, w, h, rcol):
                  (252, 214, 110))
         c.ring(x + w * (0.36 + i * 0.12), gy + h * 0.1, h * 0.04,
                (196, 150, 50), 1)
+    # depth layer: column shading, steps shadow, ticker glow
+    for i in range(5):
+        c.vline(bx + 3 + i * (bw - 6) / 5 + w * 0.03, by + h * 0.07,
+                h * 0.36, (200, 196, 186), 1)
+    _shadow(c, bx + bw / 2, gy + 2, bw * 0.95, (132, 128, 118))
+    _glow(c, tx + w * 0.11, ty + h * 0.17, h * 0.12, (170, 240, 190))
+    for i in range(3):
+        _person(c, bx + bw * (0.25 + i * 0.25), gy + h * 0.18, h * 0.11,
+                SIL if i % 2 else (70, 60, 80))
 
 
 def scene_market(c, x, y, w, h, rcol):
@@ -1300,6 +1460,15 @@ def scene_market(c, x, y, w, h, rcol):
                    (tx - w * 0.03, sy + h * 0.35)], (250, 240, 200))
         c.text_center(tx, sy + h * 0.325, "%", SANSB, SANSB_EM, SANSB_ASC,
                       h * 0.09, RED)
+    # depth layer: cart + shopper shadows, awning shadow stripe,
+    # shelf shading lines
+    _shadow(c, cx + w * 0.1, cy + h * 0.06, w * 0.22, (160, 150, 132))
+    _shadow(c, cx + w * 0.27, gy + h * 0.17, w * 0.06, (160, 150, 132))
+    c.rect(sx, sy + h * 0.19, sw, h * 0.03, (140, 132, 118))
+    for r in range(2):
+        c.hline(sx + sw * 0.04, sy + h * (0.35 + r * 0.16), sw * 0.9,
+                (110, 104, 94), 1)
+    _shadow(c, sx + sw / 2, gy + 2, sw * 0.9, (160, 150, 132))
 
 
 SCENES = {

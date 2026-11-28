@@ -281,6 +281,122 @@ class Canvas:
     def triangle(self, x0, y0, x1, y1, x2, y2, color):
         self.polygon([(x0, y0), (x1, y1), (x2, y2)], color)
 
+    # ---- extended illustration primitives (proto branch) ----
+    def ellipse(self, cx, cy, rx, ry, color, a=255):
+        cx, cy = int(cx * SS), int(cy * SS)
+        rx, ry = int(rx * SS), int(ry * SS)
+        if rx <= 0 or ry <= 0:
+            return
+        for yy in range(cy - ry, cy + ry + 1):
+            t = (yy - cy) / ry
+            if abs(t) > 1:
+                continue
+            dx = int(rx * (1 - t * t) ** 0.5)
+            for xx in range(cx - dx, cx + dx + 1):
+                if a >= 255:
+                    self.set(xx, yy, color)
+                else:
+                    self.blend(xx, yy, color, a)
+
+    def polygon_alpha(self, pts, color, a):
+        if a >= 255:
+            self.polygon(pts, color)
+            return
+        pts = [(x * SS, y * SS) for (x, y) in pts]
+        miny = int(min(p[1] for p in pts))
+        maxy = int(max(p[1] for p in pts))
+        n = len(pts)
+        for yy in range(miny, maxy + 1):
+            nodes = []
+            for i in range(n):
+                x0, y0 = pts[i]
+                x1, y1 = pts[(i + 1) % n]
+                if y0 == y1:
+                    continue
+                if (yy >= min(y0, y1)) and (yy < max(y0, y1)):
+                    nodes.append(x0 + (yy - y0) * (x1 - x0) / (y1 - y0))
+            nodes.sort()
+            for i in range(0, len(nodes) - 1, 2):
+                xa = int(nodes[i])
+                xb = int(nodes[i + 1])
+                for xx in range(xa, xb + 1):
+                    self.blend(xx, yy, color, a)
+
+    def _flatten(self, cmds):
+        """Flatten M/L/C/Q/Z path commands to a polygon point list."""
+        pts = []
+        cur = None
+        start = None
+        for cmd in cmds:
+            op = cmd[0]
+            if op == "M":
+                cur = (cmd[1], cmd[2])
+                start = cur
+                pts.append(cur)
+            elif op == "L":
+                cur = (cmd[1], cmd[2])
+                pts.append(cur)
+            elif op == "C":
+                x0, y0 = cur
+                x1, y1, x2, y2, x3, y3 = cmd[1:7]
+                for i in range(1, 21):
+                    t = i / 20
+                    mt = 1 - t
+                    px = (mt ** 3 * x0 + 3 * mt * mt * t * x1
+                          + 3 * mt * t * t * x2 + t ** 3 * x3)
+                    py = (mt ** 3 * y0 + 3 * mt * mt * t * y1
+                          + 3 * mt * t * t * y2 + t ** 3 * y3)
+                    pts.append((px, py))
+                cur = (x3, y3)
+            elif op == "Q":
+                x0, y0 = cur
+                x1, y1, x2, y2 = cmd[1:5]
+                for i in range(1, 17):
+                    t = i / 16
+                    mt = 1 - t
+                    px = mt * mt * x0 + 2 * mt * t * x1 + t * t * x2
+                    py = mt * mt * y0 + 2 * mt * t * y1 + t * t * y2
+                    pts.append((px, py))
+                cur = (x2, y2)
+            elif op == "Z":
+                if start:
+                    pts.append(start)
+                cur = start
+        return pts
+
+    def path_fill(self, cmds, color, a=255):
+        self.polygon_alpha(self._flatten(cmds), color, a)
+
+    def path_stroke(self, cmds, color, t=1.5, a=255):
+        pts = self._flatten(cmds)
+        r = max(0.6, t / 2)
+        for (px, py) in pts:
+            if a >= 255:
+                self.circle(px, py, r, color)
+            else:
+                cx, cy, rr = int(px * SS), int(py * SS), int(r * SS)
+                for yy in range(cy - rr, cy + rr + 1):
+                    for xx in range(cx - rr, cx + rr + 1):
+                        if (xx - cx) ** 2 + (yy - cy) ** 2 <= rr * rr:
+                            self.blend(xx, yy, color, a)
+
+    def hgrad(self, x, y, w, h, left, right):
+        x, y, w, h = int(x * SS), int(y * SS), int(w * SS), int(h * SS)
+        if w <= 0 or h <= 0:
+            return
+        for xx in range(x, x + w):
+            t = (xx - x) / max(1, w - 1)
+            c = (int(left[0] + (right[0] - left[0]) * t),
+                 int(left[1] + (right[1] - left[1]) * t),
+                 int(left[2] + (right[2] - left[2]) * t))
+            for yy in range(y, y + h):
+                self.set(xx, yy, c)
+
+    def soft_shadow(self, cx, cy, w, hgt, color=(40, 44, 56)):
+        for i, a in enumerate((46, 70, 100)):
+            self.ellipse(cx, cy, w * (0.5 - i * 0.09),
+                         hgt * (0.5 - i * 0.09), color, a)
+
     # ---- text ----
     def text(self, x, y, s, font, em, asc, size, color, tracking=0.0):
         """Draw text with baseline at logical y; returns x after it."""

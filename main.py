@@ -397,6 +397,70 @@ class Canvas:
             self.ellipse(cx, cy, w * (0.5 - i * 0.09),
                          hgt * (0.5 - i * 0.09), color, a)
 
+    # ---- texture / material / engraving helpers (proto branch) ----
+    def speckle(self, x, y, w, h, n, colors, rng, rmax=2.0, a=255):
+        for _ in range(n):
+            px = x + rng.next() * w
+            py = y + rng.next() * h
+            col = colors[int(rng.next() * len(colors)) % len(colors)]
+            r = 0.7 + rng.next() * rmax
+            if a >= 255:
+                self.circle(px, py, r, col)
+            else:
+                self.ellipse(px, py, r, r, col, a)
+
+    def foliage(self, cx, cy, rx, ry, n, colors, rng, a=200):
+        for _ in range(n):
+            px = cx + (rng.next() * 2 - 1) * rx
+            py = cy + (rng.next() * 2 - 1) * ry
+            col = colors[int(rng.next() * len(colors)) % len(colors)]
+            r = 1.5 + rng.next() * 3.5
+            self.ellipse(px, py, r, r * 0.8, col, a)
+
+    def grass(self, x, y, w, h, n, colors, rng):
+        for _ in range(n):
+            px = x + rng.next() * w
+            py = y + rng.next() * h
+            col = colors[int(rng.next() * len(colors)) % len(colors)]
+            ln = 2 + rng.next() * 3
+            self.line(px, py, px + (rng.next() - 0.5) * 2, py - ln, col, 1)
+
+    def hatch(self, x, y, w, h, spacing, color, t=1, slope=1.0):
+        """Diagonal hatch lines clipped to a rect (engraving shade)."""
+        k = -h
+        while k < w + h:
+            x0 = x + k
+            y0 = y + h
+            x1 = x + k + h * slope
+            y1 = y
+            # clip segment to rect
+            pts = []
+            for (px, py) in [(x0, y0), (x1, y1)]:
+                pts.append((px, py))
+            # simple parametric clip
+            dx, dy = x1 - x0, y1 - y0
+            t0, t1 = 0.0, 1.0
+            for (p, q) in [(-dx, x0 - x), (dx, x + w - x0),
+                           (-dy, y0 - y), (dy, y + h - y0)]:
+                if p == 0:
+                    if q < 0:
+                        t0, t1 = 1.0, 0.0
+                        break
+                    continue
+                r = q / p
+                if p < 0:
+                    t0 = max(t0, r)
+                else:
+                    t1 = min(t1, r)
+            if t0 <= t1:
+                self.line(x0 + dx * t0, y0 + dy * t0,
+                          x0 + dx * t1, y0 + dy * t1, color, t)
+            k += spacing
+
+    def stipple(self, x, y, w, h, n, color, rng, r=1.0):
+        for _ in range(n):
+            self.circle(x + rng.next() * w, y + rng.next() * h, r, color)
+
     # ---- text ----
     def text(self, x, y, s, font, em, asc, size, color, tracking=0.0):
         """Draw text with baseline at logical y; returns x after it."""
@@ -474,6 +538,17 @@ class Canvas:
 
 
 # ---------------------------------------------------------------- PNG encoder
+class LCG:
+    """Deterministic seeded RNG (no hash/random dependence)."""
+
+    def __init__(self, seed):
+        self.s = seed & 0x7FFFFFFF
+
+    def next(self):
+        self.s = (self.s * 1103515245 + 12345) & 0x7FFFFFFF
+        return self.s / 0x7FFFFFFF
+
+
 def png_bytes(raw):
     rows = bytearray()
     stride = W * 3
